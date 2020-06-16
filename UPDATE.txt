@@ -1,0 +1,2 @@
+# Should the bot be automatically updated based on the current commit?
+update=true
