@@ -19,13 +19,14 @@ namespace gardener.Updater
             {
                 var input = sr.ReadLine().Split(' ');
                 var channel = ulong.Parse(input[0]);
-                var message = ulong.Parse(input[0]);
+                var message = ulong.Parse(input[1]);
                 var chanInstance = await Garden.TheFriendTree.GetTextChannelAsync(channel);
 
                 await chanInstance.AddPermissionOverwriteAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
 
                 await chanInstance.DeleteMessagesAsync(new[]{message});
             }
+            File.Delete("data/updateinfo.garden");
         }
 
         public static async Task StartUpdate()
@@ -49,7 +50,7 @@ namespace gardener.Updater
                     await channel.AddPermissionOverwriteAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
 
                     var result = await channel.SendMessageAsync(embed: GetEmbed());
-                    messagesSent.Add(channel.Id + "" + result.Id);
+                    messagesSent.Add(channel.Id + " " + result.Id);
                 }
 
                 await Task.Delay(100);
