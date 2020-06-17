@@ -135,7 +135,6 @@ namespace gardener
             Console.WriteLine("Bot Stopped.");
             TokenSource.Cancel();
             _client.StopAsync().ConfigureAwait(false);
-            Environment.Exit(0);
         }
 
         public void Update()
@@ -144,7 +143,7 @@ namespace gardener
             Console.WriteLine("Bot Stopped for Update.");
             TokenSource.Cancel();
             _client.StopAsync().ConfigureAwait(false);
-            Environment.Exit(1);
+            Console.WriteLine("Exit-Update");
         }
 
         private IServiceProvider ConfigureServices()
