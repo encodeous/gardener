@@ -9,16 +9,34 @@ namespace gardener.Updater
 {
     class UpdateProcess
     {
+        public static async Task PostUpdate()
+        {
+            var sr = new StringReader(File.ReadAllText("data/updateinfo.garden"));
+            int messages = int.Parse(sr.ReadLine());
+            var flag = new OverwritePermissions(sendMessages: PermValue.Deny);
+            for (int i = 0; i < messages; i++)
+            {
+                var input = sr.ReadLine().Split(' ');
+                var channel = ulong.Parse(input[0]);
+                var message = ulong.Parse(input[0]);
+                var chanInstance = await Garden.TheFriendTree.GetTextChannelAsync(channel);
+
+                await chanInstance.AddPermissionOverwriteAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
+
+                await chanInstance.DeleteMessagesAsync(new[]{message});
+            }
+        }
+
         public static async Task StartUpdate()
         {
             await NotifyUpdate();
             await File.WriteAllTextAsync("data/version.garden", await GithubChecker.GetRemoteVersion());
-            Program.Instance.Update();
+            await Program.Instance.Update();
         }
 
         public static async Task NotifyUpdate()
         {
-            List<ulong> messagesSent = new List<ulong>();
+            List<string> messagesSent = new List<string>();
             List<ulong> channelsModified = new List<ulong>();
             var chan = await Garden.TheFriendTree.GetTextChannelsAsync();
             var flag = new OverwritePermissions(sendMessages: PermValue.Deny);
@@ -27,11 +45,10 @@ namespace gardener.Updater
                 var perm = channel.GetPermissionOverwrite(Garden.TheFriendTree.GetRole(Garden.MemberRole));
                 if (perm.HasValue && perm.Value.SendMessages == PermValue.Allow)
                 {
-                    channelsModified.Add(channel.Id);
                     await channel.AddPermissionOverwriteAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
 
                     var result = await channel.SendMessageAsync(embed: GetEmbed());
-                    messagesSent.Add(result.Id);
+                    messagesSent.Add(channel.Id + "" + result.Id);
                 }
 
                 await Task.Delay(100);
@@ -40,12 +57,6 @@ namespace gardener.Updater
             await using var sw = new StringWriter();
             await sw.WriteLineAsync(messagesSent.Count + "");
             foreach (var val in messagesSent)
-            {
-                await sw.WriteLineAsync(val + "");
-            }
-
-            await sw.WriteLineAsync(channelsModified.Count + "");
-            foreach (var val in channelsModified)
             {
                 await sw.WriteLineAsync(val + "");
             }

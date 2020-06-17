@@ -74,7 +74,7 @@ namespace gardener
                 await Task.Delay(100).ConfigureAwait(false);
             }
 
-            Garden.OnStart();
+            await Garden.OnStart();
 
             bool state = true;
 
@@ -94,12 +94,12 @@ namespace gardener
                 state = !state;
             }, TimeSpan.FromSeconds(5), StopToken);
 
-            Executor.WhileToken(() =>
+            Executor.WhileToken(async () =>
             {
                 string k = Console.ReadLine();
                 if (k == "exit")
                 {
-                    Stop();
+                    await Stop();
                 }
             }, StopToken);
 
@@ -126,25 +126,23 @@ namespace gardener
 
         private void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            Stop();
+            Executor.Forget(Stop);
         }
 
-        public void Stop()
+        public async Task Stop()
         {
-            Garden.OnStop();
+            await Garden.OnStop();
             Console.WriteLine("Bot Stopped.");
             TokenSource.Cancel();
-            _client.StopAsync().ConfigureAwait(false);
+            await _client.StopAsync().ConfigureAwait(false);
         }
 
-        public void Update()
-        {
-            Garden.OnStop();
+        public async Task Update()
+        { 
+            await Garden.OnStop();
             Console.WriteLine("Bot Stopped for Update.");
             TokenSource.Cancel();
-            _client.StopAsync().ConfigureAwait(false);
-            Console.WriteLine("Exit-Update");
-            Task.Delay(1000);
+            await _client.StopAsync().ConfigureAwait(false);
         }
 
         private IServiceProvider ConfigureServices()

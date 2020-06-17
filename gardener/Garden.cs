@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Discord;
 using gardener.Tree;
+using gardener.Updater;
 
 namespace gardener
 {
@@ -15,18 +17,19 @@ namespace gardener
         public static ulong NotConnectedRole = 719734965310455810;
         public static ulong MemberRole = 721024747709923370;
 
-        public static void OnStop()
+        public static async Task OnStop()
         {
-            Tree.Save();
+            await Tree.SaveAsync();
         }
 
-        public static void OnStart()
+        public static async Task OnStart()
         {
             if (File.Exists("data/updateinfo.garden"))
             {
-                Console.WriteLine("Running Post-Update Procedure...");
+                Console.WriteLine("Running Post-Update Procedure..."); 
+                await UpdateProcess.PostUpdate();
             }
-            Tree.Load();
+            await Tree.LoadAsync();
         }
     }
 }

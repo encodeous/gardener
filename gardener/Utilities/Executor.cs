@@ -46,6 +46,11 @@ namespace gardener.Utilities
             return await proc.StandardOutput.ReadToEndAsync();
         }
 
+        public static void Forget(Func<Task> t)
+        {
+            Task.Run(t).ConfigureAwait(false);
+        }
+
         public static void Recur(Action action, TimeSpan delay, CancellationToken token)
         {
             Task.Run(async () =>

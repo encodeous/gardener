@@ -13,12 +13,12 @@ namespace gardener.Tree
     {
         public TreeState TreeState;
         public HashSet<ulong> UsersConnecting = new HashSet<ulong>();
-        public void Save()
+        public async Task SaveAsync()
         {
 
         }
 
-        public void Load()
+        public async Task LoadAsync()
         {
             TreeState = new TreeState();
             if (TreeState.Graph.Count == 0)
