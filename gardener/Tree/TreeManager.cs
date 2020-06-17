@@ -21,10 +21,13 @@ namespace gardener.Tree
         public async Task LoadAsync()
         {
             TreeState = new TreeState();
-            if (TreeState.Graph.Count == 0)
+            if (TreeState.Users.Count == 0)
             {
-                TreeState.Graph.Add(new UserObject(){Friends = new List<int>(), FriendsInvited = new List<int>(), InvitedBy = 0, InviteLink = 0, TreeIndex = 0, UserId = 236596516423204865});
-                TreeState.InviteMap.Add(0,0);
+                var usr = CreateUser(236596516423204865);
+                usr.TreeIndex = 0;
+                usr.InvitedBy = 0;
+                TreeState.InviteMap.Add(usr.TreeCode,0);
+                TreeState.UserMap[236596516423204865] = 0;
             }
         }
 
@@ -59,7 +62,7 @@ namespace gardener.Tree
                     int inviteCode = ParseCode(code);
                     if (TreeState.InviteMap.ContainsKey(inviteCode))
                     {
-                        var inviter = TreeState.Graph[TreeState.InviteMap[inviteCode]];
+                        var inviter = TreeState.Users[TreeState.InviteMap[inviteCode]];
                         var inviteUser = await Garden.TheFriendTree.GetUserAsync(inviter.UserId).ConfigureAwait(false);
                         if (inviteUser != null)
                         {
@@ -74,10 +77,12 @@ namespace gardener.Tree
                         var userObj = CreateUser(user.Id);
                         userObj.InvitedBy = inviter.TreeIndex;
                         userObj.Friends.Add(inviter.TreeIndex);
-                        int newUserIndex = TreeState.Graph.Count;
+                        int newUserIndex = TreeState.Users.Count;
                         userObj.TreeIndex = newUserIndex;
 
-                        TreeState.Graph.Add(userObj);
+                        TreeState.Users.Add(userObj);
+
+                        TreeState.UserMap[user.Id] = userObj.TreeIndex;
 
                         inviter.FriendsInvited.Add(newUserIndex);
                         inviter.Friends.Add(newUserIndex);
@@ -97,6 +102,19 @@ namespace gardener.Tree
             }
         }
 
+        public UserObject GetUser(ulong uid)
+        {
+            return TreeState.Users[TreeState.UserMap[uid]];
+        }
+
+        public string GetTreeCodeFormatted(int code)
+        {
+            return
+                $"T-{code / 100000000}{code / 10000000}{code / 1000000}" +
+                $"-{code / 100000}{code / 10000}{code / 1000}" +
+                $"-{code / 100}{code / 10}{code}";
+        }
+
         public UserObject CreateUser(ulong uid)
         {
             var obj = new UserObject {UserId = uid, Friends = new List<int>(), FriendsInvited = new List<int>()};
@@ -107,7 +125,7 @@ namespace gardener.Tree
                 code = rng.Next(0, 999999999);
             }
 
-            obj.InviteLink = code;
+            obj.TreeCode = code;
             return obj;
         }
 

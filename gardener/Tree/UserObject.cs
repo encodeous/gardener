@@ -11,6 +11,6 @@ namespace gardener.Tree
         public int InvitedBy;
         public List<int> Friends;
         public List<int> FriendsInvited;
-        public int InviteLink;
+        public int TreeCode;
     }
 }

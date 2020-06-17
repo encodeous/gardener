@@ -6,10 +6,11 @@ namespace gardener.Tree
 {
     class TreeState
     {
-        public List<UserObject> Graph = new List<UserObject>();
+        public List<UserObject> Users = new List<UserObject>();
         /// <summary>
         /// Maps Invite Link to User
         /// </summary>
         public Dictionary<int, int> InviteMap = new Dictionary<int, int>();
+        public Dictionary<ulong, int> UserMap = new Dictionary<ulong, int>();
     }
 }
