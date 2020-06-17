@@ -14,5 +14,15 @@ namespace gardener
         public static TreeManager Tree = new TreeManager();
         public static ulong NotConnectedRole = 719734965310455810;
         public static ulong MemberRole = 721024747709923370;
+
+        public static void OnStop()
+        {
+            Tree.Save();
+        }
+
+        public static void OnStart()
+        {
+            Tree.Load();
+        }
     }
 }

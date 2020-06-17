@@ -80,6 +80,7 @@ namespace updater
                     Arguments = args,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
                     CreateNoWindow = true,
                     WorkingDirectory = workingDirectory
                 }

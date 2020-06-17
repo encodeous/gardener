@@ -22,13 +22,6 @@ namespace gardener
         public static CancellationTokenSource TokenSource = new CancellationTokenSource();
         public static CancellationToken StopToken = TokenSource.Token;
 
-        public static CancellationTokenSource UpdateTokenSource = new CancellationTokenSource();
-        public static CancellationToken UpdateToken = UpdateTokenSource.Token;
-
-        public static CancellationTokenSource PauseSource =
-            CancellationTokenSource.CreateLinkedTokenSource(StopToken, UpdateToken);
-        public static CancellationToken PauseToken = PauseSource.Token;
-
         public static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
 
@@ -54,7 +47,6 @@ namespace gardener
             }
 
             Instance = this;
-            Garden.Tree.Load();
 
             $"Starting Gardener Bot {Config.VersionString}...".Log();
             $"Building Configuration".Log();
@@ -82,6 +74,8 @@ namespace gardener
                 await Task.Delay(100).ConfigureAwait(false);
             }
 
+            Garden.OnStart();
+
             bool state = true;
 
             Executor.Recur(async () =>
@@ -98,7 +92,7 @@ namespace gardener
                 }
 
                 state = !state;
-            }, TimeSpan.FromSeconds(5), PauseToken);
+            }, TimeSpan.FromSeconds(5), StopToken);
 
             Executor.WhileToken(() =>
             {
@@ -108,6 +102,15 @@ namespace gardener
                     Stop();
                 }
             }, StopToken);
+
+            Executor.Recur(async () =>
+            {
+                if (await GithubChecker.UpdateAvailable())
+                {
+                    Console.WriteLine("Updating Gardener...");
+                    await UpdateProcess.StartUpdate();
+                }
+            }, TimeSpan.FromSeconds(60), StopToken);
 
             await Task.Delay(-1, StopToken);
         }
@@ -125,11 +128,20 @@ namespace gardener
 
         public void Stop()
         {
+            Garden.OnStop();
             Console.WriteLine("Bot Stopped.");
-            Garden.Tree.Save();
             TokenSource.Cancel();
             _client.StopAsync().ConfigureAwait(false);
             Environment.Exit(0);
+        }
+
+        public void Update()
+        {
+            Garden.OnStop();
+            Console.WriteLine("Bot Stopped for Update.");
+            TokenSource.Cancel();
+            _client.StopAsync().ConfigureAwait(false);
+            Environment.Exit(-1);
         }
 
         private IServiceProvider ConfigureServices()
