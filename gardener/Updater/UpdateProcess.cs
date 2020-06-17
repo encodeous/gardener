@@ -20,19 +20,21 @@ namespace gardener.Updater
         {
             List<ulong> messagesSent = new List<ulong>();
             List<ulong> channelsModified = new List<ulong>();
-            var chan = await Garden.TheFriendTree.GetChannelsAsync();
+            var chan = await Garden.TheFriendTree.GetTextChannelsAsync();
             var flag = new OverwritePermissions(sendMessages: PermValue.Deny);
             foreach(var channel in chan)
             {
-                var textChannel = channel as IMessageChannel;
                 var perm = channel.GetPermissionOverwrite(Garden.TheFriendTree.GetRole(Garden.MemberRole));
                 if (perm.HasValue && perm.Value.SendMessages == PermValue.Allow)
                 {
                     channelsModified.Add(channel.Id);
                     await channel.AddPermissionOverwriteAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
-                    var result = await textChannel.SendMessageAsync(embed: GetEmbed());
+
+                    var result = await channel.SendMessageAsync(embed: GetEmbed());
                     messagesSent.Add(result.Id);
                 }
+
+                await Task.Delay(100);
             }
 
             await using var sw = new StringWriter();
