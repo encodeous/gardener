@@ -12,6 +12,7 @@ namespace gardener.Updater
         public static async Task StartUpdate()
         {
             await NotifyUpdate();
+            await File.WriteAllTextAsync("data/version.garden", await GithubChecker.GetRemoteVersion());
             Program.Instance.Update();
         }
 
