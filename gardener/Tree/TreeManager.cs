@@ -111,9 +111,9 @@ namespace gardener.Tree
         public string GetTreeCodeFormatted(int code)
         {
             return
-                $"T-{code / 100000000}{code / 10000000}{code / 1000000}" +
-                $"-{code / 100000}{code / 10000}{code / 1000}" +
-                $"-{code / 100}{code / 10}{code}";
+                $"T-{(code / 100000000) % 10}{(code / 10000000) % 10}{(code / 1000000) % 10}" +
+                $"-{(code / 100000) % 10}{(code / 10000) % 10}{(code / 1000) % 10}" +
+                $"-{(code / 100) % 10}{(code / 10) % 10}{(code) % 10}";
         }
 
         public UserObject CreateUser(ulong uid)
