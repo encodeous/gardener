@@ -64,7 +64,7 @@ namespace updater
                 Console.WriteLine("Running Gardener...");
                 var output = RunWithRedirection("dotnet", "binary/gardener.dll", Environment.CurrentDirectory);
                 if (output == 0) return;
-                if (output == -1)
+                if (output == 1)
                 {
                     Update();
                     Run();
