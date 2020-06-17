@@ -10,8 +10,6 @@ namespace updater
     {
         public Process ActiveProcess;
 
-        public bool UpdateFlag = false;
-
         public static string Repo = "https://github.com/encodeous/gardener.git";
 
         public static void Main(string[] args)
@@ -66,9 +64,8 @@ namespace updater
                 Console.WriteLine("Running Gardener...");
                 RunWithRedirection("dotnet", "binary/gardener.dll", Environment.CurrentDirectory);
                 Task.Delay(500);
-                if (UpdateFlag)
+                if (File.Exists("data/updateinfo.garden"))
                 {
-                    UpdateFlag = !UpdateFlag;
                     Update();
                     Run();
                 }
@@ -96,20 +93,10 @@ namespace updater
                     WorkingDirectory = workingDirectory
                 }
             };
-            proc.OutputDataReceived += (sender, eventArgs) =>
-            {
-                if (eventArgs.Data == "Exit-Update")
-                {
-                    UpdateFlag = true;
-                }
-                else
-                {
-                    Console.WriteLine(eventArgs.Data);
-                }
-            };
+            proc.OutputDataReceived += (sender, eventArgs) => Console.WriteLine(eventArgs.Data);
             proc.Start();
-            ActiveProcess = proc;
             proc.BeginOutputReadLine();
+            ActiveProcess = proc;
             proc.WaitForExit();
             return proc.ExitCode;
         }

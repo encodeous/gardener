@@ -22,6 +22,10 @@ namespace gardener
 
         public static void OnStart()
         {
+            if (File.Exists("data/updateinfo.garden"))
+            {
+                Console.WriteLine("Running Post-Update Procedure...");
+            }
             Tree.Load();
         }
     }
