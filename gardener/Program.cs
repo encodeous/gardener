@@ -74,8 +74,6 @@ namespace gardener
                 await Task.Delay(100).ConfigureAwait(false);
             }
 
-            await Garden.OnStart();
-
             bool state = true;
 
             Executor.Recur(async () =>
@@ -111,6 +109,8 @@ namespace gardener
                     await UpdateProcess.StartUpdate();
                 }
             }, TimeSpan.FromSeconds(30), StopToken);
+
+            await Garden.OnStart();
 
             while (!StopToken.IsCancellationRequested)
             {
