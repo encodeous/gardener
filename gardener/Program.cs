@@ -110,7 +110,7 @@ namespace gardener
                     Console.WriteLine("Updating Gardener...");
                     await UpdateProcess.StartUpdate();
                 }
-            }, TimeSpan.FromSeconds(60), StopToken);
+            }, TimeSpan.FromSeconds(30), StopToken);
 
             await Task.Delay(-1, StopToken);
         }

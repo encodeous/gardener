@@ -38,7 +38,15 @@ namespace updater
             Console.WriteLine("Building Sources");
             RunWithRedirection("dotnet", "build -o " + Path.Combine(Environment.CurrentDirectory, "binary"),
                 Path.Combine(Environment.CurrentDirectory, "update", "gardener", "gardener"));
-
+            try
+            {
+                Directory.Delete("update", true);
+            }
+            catch
+            {
+                // ignored
+            }
+            
         }
 
         public void Update()
