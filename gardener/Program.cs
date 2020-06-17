@@ -40,6 +40,7 @@ namespace gardener
             }
 
             Config.Token = await File.ReadAllTextAsync("data/token.garden");
+
             if (string.IsNullOrEmpty(Config.Token))
             {
                 Console.WriteLine("Please paste in the token into data/token.garden!");

@@ -63,10 +63,14 @@ namespace updater
             {
                 Console.WriteLine("Running Gardener...");
                 RunWithRedirection("dotnet", "binary/gardener.dll", Environment.CurrentDirectory);
-                Task.Delay(500);
+
+                Task.Delay(100);
+
                 if (File.Exists("data/updateinfo.garden"))
                 {
                     Update();
+                    // Wait for discord
+                    Task.Delay(5000);
                     Run();
                 }
             }

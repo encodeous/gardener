@@ -11,6 +11,7 @@ namespace gardener.Updater
     {
         public static async Task PostUpdate()
         {
+            await Task.Delay(5000);
             Console.WriteLine("Unlocking Channels...");
             var sr = new StringReader(File.ReadAllText("data/updateinfo.garden"));
             int messages = int.Parse(sr.ReadLine());
@@ -34,6 +35,7 @@ namespace gardener.Updater
                 }
             }
             File.Delete("data/updateinfo.garden");
+            Console.WriteLine("Update Complete!");
         }
 
         public static async Task StartUpdate()
