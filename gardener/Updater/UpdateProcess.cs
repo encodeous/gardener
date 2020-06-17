@@ -14,7 +14,7 @@ namespace gardener.Updater
             Console.WriteLine("Unlocking Channels...");
             var sr = new StringReader(File.ReadAllText("data/updateinfo.garden"));
             int messages = int.Parse(sr.ReadLine());
-            var flag = new OverwritePermissions(sendMessages: PermValue.Deny);
+            var flag = new OverwritePermissions(sendMessages: PermValue.Deny, viewChannel: PermValue.Allow);
             for (int i = 0; i < messages; i++)
             {
                 var input = sr.ReadLine().Split(' ');
@@ -41,11 +41,11 @@ namespace gardener.Updater
             Console.WriteLine("Locking Channels...");
             List<string> messagesSent = new List<string>();
             var chan = await Garden.TheFriendTree.GetTextChannelsAsync();
-            var flag = new OverwritePermissions(sendMessages: PermValue.Deny);
+            var flag = new OverwritePermissions(sendMessages: PermValue.Deny, viewChannel: PermValue.Allow);
             foreach(var channel in chan)
             {
                 var perm = channel.GetPermissionOverwrite(Garden.TheFriendTree.GetRole(Garden.MemberRole));
-                if (perm.HasValue && perm.Value.SendMessages == PermValue.Allow)
+                if (perm.HasValue && perm.Value.ViewChannel == PermValue.Allow)
                 {
                     await channel.AddPermissionOverwriteAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
 
