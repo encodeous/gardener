@@ -47,6 +47,7 @@ namespace gardener.Updater
             {
                 await sw.WriteLineAsync(val + "");
             }
+
             await File.WriteAllTextAsync("data/updateinfo.garden", sw.ToString());
         }
 
