@@ -40,6 +40,7 @@ namespace gardener.Updater
 
         public static async Task StartUpdate()
         {
+            Config.Ready = false;
             await NotifyUpdate();
             await File.WriteAllTextAsync("data/version.garden", await GithubChecker.GetRemoteVersion());
             await Program.Instance.Update();

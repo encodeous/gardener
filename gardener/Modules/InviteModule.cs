@@ -16,7 +16,7 @@ namespace gardener.Modules
             if (obj != null)
             {
                 Context.User.SendMessageAsync("Thank you for inviting others to the server.\n" +
-                                              "Here is the invite link: `https://discord.gg/5CrhWfg`\n" +
+                                              $"Here is the invite link: `{Config.InviteLink}`\n" +
                                               $"Your **Tree Code** is {Garden.Tree.GetTreeCodeFormatted(obj.TreeCode)}\n");
             }
             else

@@ -11,5 +11,7 @@ namespace gardener
         public static string AutoUpdateLink = "https://raw.githubusercontent.com/encodeous/gardener/master/UPDATE.txt";
         public static string Prefix = "!";
         public static string Token = "";
+        public static string InviteLink = "https://discord.gg/PNM3ZUf";
+        public static bool Ready = false;
     }
 }

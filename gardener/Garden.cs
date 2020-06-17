@@ -19,6 +19,8 @@ namespace gardener
 
         public static async Task OnStop()
         {
+            Config.Ready = false;
+
             await Tree.SaveAsync();
         }
 
@@ -30,6 +32,9 @@ namespace gardener
                 await UpdateProcess.PostUpdate();
             }
             await Tree.LoadAsync();
+
+
+            Config.Ready = true;
         }
     }
 }

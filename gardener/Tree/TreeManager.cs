@@ -12,7 +12,6 @@ namespace gardener.Tree
     class TreeManager
     {
         public TreeState TreeState;
-        public HashSet<ulong> UsersConnecting = new HashSet<ulong>();
         public async Task SaveAsync()
         {
 
@@ -40,7 +39,7 @@ namespace gardener.Tree
                                   "Please send me a **Tree Code** to join the server.\n" +
                                   "A **Tree Code** looks like `T-123-123-123`.\n" +
                                   "Just message me in this DM to connect your account to the Tree!");
-            UsersConnecting.Add(user.Id);
+            TreeState.UsersConnecting.Add(user.Id);
         }
 
         private readonly Regex _matcher = new Regex("T-[0-9]{3}-[0-9]{3}-[0-9]{3}");
@@ -88,7 +87,7 @@ namespace gardener.Tree
                         inviter.FriendsInvited.Add(newUserIndex);
                         inviter.Friends.Add(newUserIndex);
 
-                        UsersConnecting.Remove(user.Id);
+                        TreeState.UsersConnecting.Remove(user.Id);
                         await GiveRoles(user.Id);
                     }
                     else

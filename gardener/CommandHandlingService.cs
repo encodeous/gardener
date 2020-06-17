@@ -38,7 +38,9 @@ namespace gardener
             if (!(rawMessage is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
 
-            if (Garden.Tree.UsersConnecting.Contains(rawMessage.Author.Id))
+            if (!Config.Ready) return;
+
+            if (Garden.Tree.TreeState.UsersConnecting.Contains(rawMessage.Author.Id))
             {
                 await Garden.Tree.OnUserMessageAsync(rawMessage);
                 return;
