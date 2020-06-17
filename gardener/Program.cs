@@ -27,7 +27,6 @@ namespace gardener
 
         public async Task MainAsync()
         {
-            Compile Error Test
             if (await GithubChecker.UpdateAvailable())
             {
                 Console.WriteLine("An update is available. The bot will update shortly");
