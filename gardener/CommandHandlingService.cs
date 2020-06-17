@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using gardener.Utilities;
 
 namespace gardener
 {
@@ -47,11 +48,14 @@ namespace gardener
             if (!message.HasStringPrefix(Config.Prefix, ref argPos)) return;
 
             var context = new SocketCommandContext(_discord, message);
-            var result = await _commands.ExecuteAsync(context, argPos, _provider).ConfigureAwait(false);
+            if (Limiter.CanExecute(context))
+            {
+                var result = await _commands.ExecuteAsync(context, argPos, _provider).ConfigureAwait(false);
 
-            if (result.Error.HasValue &&
-                result.Error.Value != CommandError.UnknownCommand)
-                await context.Channel.SendMessageAsync(result.ToString()).ConfigureAwait(false);
+                if (result.Error.HasValue &&
+                    result.Error.Value != CommandError.UnknownCommand)
+                    await context.Channel.SendMessageAsync(result.ToString()).ConfigureAwait(false);
+            }
         }
     }
 }
