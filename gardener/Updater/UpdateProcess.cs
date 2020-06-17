@@ -11,6 +11,7 @@ namespace gardener.Updater
     {
         public static async Task PostUpdate()
         {
+            Console.WriteLine("Unlocking Channels...");
             var sr = new StringReader(File.ReadAllText("data/updateinfo.garden"));
             int messages = int.Parse(sr.ReadLine());
             var flag = new OverwritePermissions(sendMessages: PermValue.Deny);
@@ -36,8 +37,8 @@ namespace gardener.Updater
 
         public static async Task NotifyUpdate()
         {
+            Console.WriteLine("Locking Channels...");
             List<string> messagesSent = new List<string>();
-            List<ulong> channelsModified = new List<ulong>();
             var chan = await Garden.TheFriendTree.GetTextChannelsAsync();
             var flag = new OverwritePermissions(sendMessages: PermValue.Deny);
             foreach(var channel in chan)
