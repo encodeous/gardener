@@ -54,6 +54,7 @@ namespace gardener.Updater
                 }
 
                 await Task.Delay(100);
+
             }
 
             await using var sw = new StringWriter();
