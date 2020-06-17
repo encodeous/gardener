@@ -112,7 +112,10 @@ namespace gardener
                 }
             }, TimeSpan.FromSeconds(30), StopToken);
 
-            await Task.Delay(-1, StopToken);
+            while (!StopToken.IsCancellationRequested)
+            {
+                await Task.Delay(100);
+            }
         }
 
         private Task ClientOnUserJoined(SocketGuildUser arg)
