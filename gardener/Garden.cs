@@ -12,7 +12,6 @@ namespace gardener
     {
         public static IGuild TheFriendTree;
         public static TreeManager Tree = new TreeManager();
-        public static string GardenPath = Environment.CurrentDirectory;
         public static ulong NotConnectedRole = 719734965310455810;
         public static ulong MemberRole = 721024747709923370;
     }

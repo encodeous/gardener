@@ -16,7 +16,7 @@ namespace gardener.Updater
             foreach(var channel in chan)
             {
                 var textChannel = channel as IMessageChannel;
-                channel.GetPermissionOverwrite(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
+                //channel.GetPermissionOverwrite(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
                 var result = await textChannel.SendMessageAsync(embed:GetEmbed());
                 messagesSent.Add(result.Id);
             }

@@ -347,6 +347,9 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 
+# Gardener Data Files
+.garden
+
 # BeatPulse healthcheck temp database
 healthchecksdb
 

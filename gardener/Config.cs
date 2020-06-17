@@ -8,5 +8,8 @@ namespace gardener
     {
         public static string VersionString = "0.1";
         public static string Repo = "https://github.com/encodeous/gardener.git";
+        public static string AutoUpdateLink = "https://raw.githubusercontent.com/encodeous/gardener/master/UPDATE.txt";
+        public static string Prefix = "!";
+        public static string Token = "";
     }
 }

@@ -13,7 +13,7 @@ namespace gardener.Modules
         {
             if (Context.User.Id == 236596516423204865)
             {
-                Program.manager.OnUserJoin(Context.Guild.GetUser(id));
+                Garden.Tree.OnUserJoin(Context.Guild.GetUser(id));
             }
 
             return Task.CompletedTask;

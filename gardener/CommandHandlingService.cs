@@ -37,14 +37,14 @@ namespace gardener
             if (!(rawMessage is SocketUserMessage message)) return;
             if (message.Source != MessageSource.User) return;
 
-            if (Program.manager.UsersConnecting.Contains(rawMessage.Author.Id))
+            if (Garden.Tree.UsersConnecting.Contains(rawMessage.Author.Id))
             {
-                await Program.manager.OnUserMessageAsync(rawMessage);
+                await Garden.Tree.OnUserMessageAsync(rawMessage);
                 return;
             }
 
             int argPos = 0;
-            if (!message.HasStringPrefix(Program._config["prefix"], ref argPos)) return;
+            if (!message.HasStringPrefix(Config.Prefix, ref argPos)) return;
 
             var context = new SocketCommandContext(_discord, message);
             var result = await _commands.ExecuteAsync(context, argPos, _provider).ConfigureAwait(false);
