@@ -26,7 +26,8 @@ namespace gardener.Tree
                 var usr = CreateUser(236596516423204865);
                 usr.TreeIndex = 0;
                 usr.InvitedBy = 0;
-                TreeState.InviteMap.Add(usr.TreeCode,0);
+                TreeState.Users.Add(usr);
+                TreeState.InviteMap.Add(usr.TreeCode, 0);
                 TreeState.UserMap[236596516423204865] = 0;
             }
         }
