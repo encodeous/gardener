@@ -65,5 +65,16 @@ namespace gardener.Utilities
                 }
             }, token);
         }
+
+        public static void WhileToken(Action action, CancellationToken token)
+        {
+            Task.Run( () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    action();
+                }
+            }, token);
+        }
     }
 }

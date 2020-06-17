@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -7,59 +8,69 @@ namespace updater
 {
     class Program
     {
+        public Process ActiveProcess;
+
         public static string Repo = "https://github.com/encodeous/gardener.git";
 
         public static void Main(string[] args)
-            => new Program().MainAsync().GetAwaiter().GetResult();
+            => new Program().Execute();
 
-        public async Task MainAsync()
+        public void Execute()
         {
             Console.WriteLine("Starting Gardener Updater...");
-            await Run();
+            Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+            Run();
             Console.WriteLine("Updater Stopped.");
         }
 
-        public async Task RebuildSources()
+        private void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            ActiveProcess.StandardInput.WriteLine("exit");
+            e.Cancel = true;
+        }
+
+        public void RebuildSources()
         {
             Console.WriteLine("Cloning Git Repository...");
             Directory.CreateDirectory("update");
-            await RunWithOutput("git", "clone " + Repo,
+            RunWithRedirection("git", "clone " + Repo,
                 Path.Combine(Environment.CurrentDirectory, "update"));
             Console.WriteLine("Building Sources");
-            await RunWithOutput("dotnet", "build -o " + Path.Combine(Environment.CurrentDirectory, "binary"),
+            RunWithRedirection("dotnet", "build -o " + Path.Combine(Environment.CurrentDirectory, "binary"),
                 Path.Combine(Environment.CurrentDirectory, "update", "gardener", "gardener"));
 
         }
 
-        public async Task Update()
+        public void Update()
         {
             Console.WriteLine("Performing Self-Update...");
             Console.WriteLine("Gardener will automatically restart after completion.");
-            await RebuildSources();
-            await Run();
+            RebuildSources();
+            Run();
         }
 
-        public async Task Run()
+        public void Run()
         {
             if (File.Exists("binary/gardener.dll"))
             {
-                var output = await RunWithOutput("dotnet", "run binary/gardener.dll", Environment.CurrentDirectory);
-                if (output.Item2 == 0) return;
-                if (output.Item2 == -1)
+                Console.WriteLine("Running Gardener...");
+                var output = RunWithRedirection("dotnet", "binary/gardener.dll", Environment.CurrentDirectory);
+                if (output == 0) return;
+                if (output == -1)
                 {
-                    await Update();
-                    await Run();
+                    Update();
+                    Run();
                 }
             }
             else
             {
                 Console.WriteLine("Could not locate gardener! Building Gardener from Sources.");
-                await RebuildSources();
-                await Run();
+                RebuildSources();
+                Run();
             }
         }
 
-        public static async ValueTask<(string, int)> RunWithOutput(string file, string args, string workingDirectory)
+        public int RunWithRedirection(string file, string args, string workingDirectory)
         {
             var proc = new Process
             {
@@ -73,9 +84,12 @@ namespace updater
                     WorkingDirectory = workingDirectory
                 }
             };
+            proc.OutputDataReceived += (sender, eventArgs) => Console.WriteLine(eventArgs.Data);
             proc.Start();
+            ActiveProcess = proc;
+            proc.BeginOutputReadLine();
             proc.WaitForExit();
-            return (await proc.StandardOutput.ReadToEndAsync(), proc.ExitCode);
+            return proc.ExitCode;
         }
     }
 }

@@ -46,6 +46,13 @@ namespace gardener
                 return;
             }
 
+            Config.Token = await File.ReadAllTextAsync("data/token.garden");
+            if (string.IsNullOrEmpty(Config.Token))
+            {
+                Console.WriteLine("Please paste in the token into data/token.garden!");
+                return;
+            }
+
             Instance = this;
             Garden.Tree.Load();
 
@@ -60,11 +67,12 @@ namespace gardener
 
             $"Connecting to Discord".Log();
 
+            await _client.LoginAsync(TokenType.Bot, Config.Token).ConfigureAwait(false);
             await _client.StartAsync().ConfigureAwait(false);
 
             _client.UserJoined += ClientOnUserJoined;
 
-            $"Bot started! Press Control + C to exit!".Log();
+            $"Bot started! Press Control + C or Type exit to exit!".Log();
 
             Console.CancelKeyPress += ConsoleOnCancelKeyPress;
 
@@ -91,6 +99,15 @@ namespace gardener
 
                 state = !state;
             }, TimeSpan.FromSeconds(5), PauseToken);
+
+            Executor.WhileToken(() =>
+            {
+                string k = Console.ReadLine();
+                if (k == "exit")
+                {
+                    Stop();
+                }
+            }, StopToken);
 
             await Task.Delay(-1, StopToken);
         }
