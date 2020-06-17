@@ -144,6 +144,7 @@ namespace gardener
             TokenSource.Cancel();
             _client.StopAsync().ConfigureAwait(false);
             Console.WriteLine("Exit-Update");
+            Task.Delay(1000);
         }
 
         private IServiceProvider ConfigureServices()
