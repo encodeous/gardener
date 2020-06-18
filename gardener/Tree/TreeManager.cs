@@ -31,15 +31,25 @@ namespace gardener.Tree
             }
         }
 
-        public void OnUserJoin(SocketGuildUser user)
+        public async Task OnUserJoin(SocketGuildUser user)
         {
-            user.AddRoleAsync(user.Guild.GetRole(Garden.NotConnectedRole));
-            user.SendMessageAsync("**Welcome to The Friend Tree!**\n" +
-                                  "\n" +
-                                  "Please send me a **Tree Code** to join the server.\n" +
-                                  "A **Tree Code** looks like `T-123-123-123`.\n" +
-                                  "Just message me in this DM to connect your account to the Tree!");
-            TreeState.UsersConnecting.Add(user.Id);
+            var usr = GetUser(user.Id);
+            if (usr != null)
+            {
+                await user.SendMessageAsync("**Welcome Back to The Friend Tree!**");
+                await GiveRoles(user.Id);
+            }
+            else
+            {
+                await user.AddRoleAsync(user.Guild.GetRole(Garden.NotConnectedRole));
+                await user.SendMessageAsync("**Welcome to The Friend Tree!**\n" +
+                                      "\n" +
+                                      "Please send me a **Tree Code** to join the server.\n" +
+                                      "A **Tree Code** looks like `T-123-123-123`.\n" +
+                                      "Just message me in this DM to connect your account to the Tree!");
+                TreeState.UsersConnecting.Add(user.Id);
+            }
+
         }
 
         private readonly Regex _matcher = new Regex("T-[0-9]{3}-[0-9]{3}-[0-9]{3}");

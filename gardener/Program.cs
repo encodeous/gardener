@@ -121,8 +121,7 @@ namespace gardener
 
         private Task ClientOnUserJoined(SocketGuildUser arg)
         {
-            Garden.Tree.OnUserJoin(arg);
-            return Task.CompletedTask;
+            return Garden.Tree.OnUserJoin(arg);
         }
 
         private void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
