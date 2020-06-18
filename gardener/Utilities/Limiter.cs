@@ -14,7 +14,7 @@ namespace gardener.Utilities
             {
                 if ((DateTime.UtcNow - LastExec[context.User.Id]) < time)
                 {
-                    context.Channel.SendMessageAsync("Please wait 1 second before using this command again!");
+                    context.Channel.SendMessageAsync($"Please wait {time.Seconds} second(s) before using this command again!");
                     return false;
                 }
                 else
