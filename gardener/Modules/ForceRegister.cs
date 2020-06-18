@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 
 namespace gardener.Modules
 {
     class ForceRegister : ModuleBase<SocketCommandContext>
     {
-        [Command("debug-forceregister")]
+        [Command("register", RunMode = RunMode.Async)]
+        [RequireUserPermission(GuildPermission.Administrator)]
         public Task Register(ulong id)
         {
-            if (Context.User.Id == 236596516423204865)
-            {
-                Garden.Tree.OnUserJoin(Context.Guild.GetUser(id));
-            }
-
-            return Task.CompletedTask;
+            return Garden.Tree.OnUserJoin(Context.Guild.GetUser(id));
         }
     }
 }
