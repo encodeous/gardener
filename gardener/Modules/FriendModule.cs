@@ -18,7 +18,7 @@ namespace gardener.Modules
         {
             if (Expression.IsMatch(user))
             {
-                ulong id = ulong.Parse(user.Substring(3, user.Length - 1));
+                ulong id = ulong.Parse(user.Substring(3, user.Length - 5));
                 var usr = await Garden.TheFriendTree.GetUserAsync(id);
                 var target = Garden.Tree.GetUser(usr.Id);
                 var cur = Garden.Tree.GetUser(Context.User.Id);
@@ -45,7 +45,7 @@ namespace gardener.Modules
         {
             if (Expression.IsMatch(user))
             {
-                ulong id = ulong.Parse(user.Substring(3, user.Length - 1));
+                ulong id = ulong.Parse(user.Substring(3, user.Length - 5));
                 var usr = await Garden.TheFriendTree.GetUserAsync(id);
                 var target = Garden.Tree.GetUser(usr.Id);
                 var cur = Garden.Tree.GetUser(Context.User.Id);
