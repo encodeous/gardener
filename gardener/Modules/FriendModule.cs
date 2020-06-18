@@ -18,26 +18,19 @@ namespace gardener.Modules
         {
             if (Expression.IsMatch(user))
             {
-                try
+                ulong id = ulong.Parse(user.Substring(3, user.Length - 1));
+                var usr = await Garden.TheFriendTree.GetUserAsync(id);
+                var target = Garden.Tree.GetUser(usr.Id);
+                var cur = Garden.Tree.GetUser(Context.User.Id);
+                if (target != cur && target != null && !usr.IsBot)
                 {
-                    ulong id = ulong.Parse(user.Substring(3, user.Length - 1));
-                    var usr = await Garden.TheFriendTree.GetUserAsync(id);
-                    var target = Garden.Tree.GetUser(usr.Id);
-                    var cur = Garden.Tree.GetUser(Context.User.Id);
-                    if (target != cur && target != null && !usr.IsBot)
-                    {
-                        target.Friends.Add(cur.TreeIndex);
-                        cur.Friends.Add(target.TreeIndex);
-                        await ReplyAsync($"Added {usr.Username}:#{usr.Discriminator} as a friend!");
-                    }
-                    else
-                    {
-                        await ReplyAsync($"The target user is either a bot or is not on this server!");
-                    }
+                    target.Friends.Add(cur.TreeIndex);
+                    cur.Friends.Add(target.TreeIndex);
+                    await ReplyAsync($"Added {usr.Username}:#{usr.Discriminator} as a friend!");
                 }
-                catch
+                else
                 {
-                    await ReplyAsync("An unknown error occurred!");
+                    await ReplyAsync($"The target user is either a bot or is not on this server!");
                 }
             }
             else
@@ -52,28 +45,21 @@ namespace gardener.Modules
         {
             if (Expression.IsMatch(user))
             {
-                try
+                ulong id = ulong.Parse(user.Substring(3, user.Length - 1));
+                var usr = await Garden.TheFriendTree.GetUserAsync(id);
+                var target = Garden.Tree.GetUser(usr.Id);
+                var cur = Garden.Tree.GetUser(Context.User.Id);
+                if (target != cur && target != null && !usr.IsBot &&
+                    target.Friends.Contains(cur.TreeIndex) &&
+                    cur.Friends.Contains(target.TreeIndex))
                 {
-                    ulong id = ulong.Parse(user.Substring(3, user.Length - 1));
-                    var usr = await Garden.TheFriendTree.GetUserAsync(id);
-                    var target = Garden.Tree.GetUser(usr.Id);
-                    var cur = Garden.Tree.GetUser(Context.User.Id);
-                    if (target != cur && target != null && !usr.IsBot &&
-                        target.Friends.Contains(cur.TreeIndex) &&
-                        cur.Friends.Contains(target.TreeIndex))
-                    {
-                        target.Friends.Remove(cur.TreeIndex);
-                        cur.Friends.Remove(target.TreeIndex);
-                        await ReplyAsync($"You are no longer the friend of {usr.Username}:#{usr.Discriminator}!");
-                    }
-                    else
-                    {
-                        await ReplyAsync($"The target user is either a bot or is not your friend!");
-                    }
+                    target.Friends.Remove(cur.TreeIndex);
+                    cur.Friends.Remove(target.TreeIndex);
+                    await ReplyAsync($"You are no longer the friend of {usr.Username}:#{usr.Discriminator}!");
                 }
-                catch
+                else
                 {
-                    await ReplyAsync("An unknown error occurred!");
+                    await ReplyAsync($"The target user is either a bot or is not your friend!");
                 }
             }
             else
@@ -86,21 +72,14 @@ namespace gardener.Modules
         [RequireContext(ContextType.Guild)]
         public async Task Friends()
         {
-            try
+            var cur = Garden.Tree.GetUser(Context.User.Id);
+            if (cur != null)
             {
-                var cur = Garden.Tree.GetUser(Context.User.Id);
-                if (cur != null)
-                {
-                    await ReplyAsync(embed: await GetEmbed(cur));
-                }
-                else
-                {
-                    await ReplyAsync($"The target user is either a bot or is not your friend!");
-                }
+                await ReplyAsync(embed: await GetEmbed(cur));
             }
-            catch
+            else
             {
-                await ReplyAsync("An unknown error occurred!");
+                await ReplyAsync($"The target user is either a bot or is not your friend!");
             }
         }
 
