@@ -89,26 +89,11 @@ namespace gardener.Modules
             {
                 Text = "Contribute to the Server | https://github.com/encodeous/gardener/tree/master"
             };
-            var st = (DateTime.Now - Program.StartTime);
             StringBuilder sb = new StringBuilder();
 
             sb.Append("**Friends:**\n");
-
-            HashSet<int> actualFriends = new HashSet<int>();
-
-            foreach (var user in obj.Friends)
-            {
-                actualFriends.Add(user);
-            }
-
-            actualFriends.Add(obj.InvitedBy);
-
-            foreach (var user in obj.FriendsInvited)
-            {
-                actualFriends.Add(user);
-            }
-
-            foreach (var id in actualFriends)
+            
+            foreach (var id in obj.Friends)
             {
                 var uid = Garden.Tree.TreeState.Users[id].UserId;
                 var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
@@ -120,7 +105,37 @@ namespace gardener.Modules
                 {
                     sb.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{id}]\n");
                 }
-                
+            }
+
+            sb.Append("**Invited Friends:**\n");
+
+            foreach (var id in obj.FriendsInvited)
+            {
+                var uid = Garden.Tree.TreeState.Users[id].UserId;
+                var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
+                if (guildUser == null)
+                {
+                    sb.Append($"Unknown User ({uid}) [{id}]\n");
+                }
+                else
+                {
+                    sb.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{id}]\n");
+                }
+            }
+
+            sb.Append("**Invited By:**\n");
+            {
+                var id = obj.InvitedBy;
+                var uid = Garden.Tree.TreeState.Users[id].UserId;
+                var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
+                if (guildUser == null)
+                {
+                    sb.Append($"Unknown User ({uid}) [{id}]\n");
+                }
+                else
+                {
+                    sb.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{id}]\n");
+                }
             }
 
             return new EmbedBuilder()
