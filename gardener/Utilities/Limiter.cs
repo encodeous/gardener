@@ -12,9 +12,9 @@ namespace gardener.Utilities
         {
             if (LastExec.ContainsKey(context.User.Id))
             {
-                if ((DateTime.UtcNow - LastExec[context.User.Id]) <= TimeSpan.FromSeconds(5))
+                if ((DateTime.UtcNow - LastExec[context.User.Id]) <= TimeSpan.FromSeconds(1))
                 {
-                    context.Channel.SendMessageAsync("Please wait 5 seconds before using this command again!");
+                    context.Channel.SendMessageAsync("Please wait 1 second before using this command again!");
                     return false;
                 }
                 else

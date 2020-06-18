@@ -107,7 +107,7 @@ namespace gardener.Modules
                 }
             }
 
-            sb.Append("**Invited Friends:**\n");
+            sb.Append("\n**Invited Friends:**\n");
 
             foreach (var id in obj.FriendsInvited)
             {
@@ -123,7 +123,7 @@ namespace gardener.Modules
                 }
             }
 
-            sb.Append("**Invited By:**\n");
+            sb.Append("\n**Invited By:**\n");
             {
                 var id = obj.InvitedBy;
                 var uid = Garden.Tree.TreeState.Users[id].UserId;
