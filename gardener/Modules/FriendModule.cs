@@ -91,7 +91,7 @@ namespace gardener.Modules
                 var cur = Garden.Tree.GetUser(Context.User.Id);
                 if (cur != null)
                 {
-                    await ReplyAsync(embed: GetEmbed(cur));
+                    await ReplyAsync(embed: await GetEmbed(cur));
                 }
                 else
                 {
