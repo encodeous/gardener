@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using gardener.Tree;
+using gardener.Utilities;
 
 namespace gardener.Modules
 {
@@ -16,26 +17,29 @@ namespace gardener.Modules
         [RequireContext(ContextType.Guild)]
         public async Task Friend(string user)
         {
-            if (Expression.IsMatch(user))
+            if (Limiter.Limit(Context, TimeSpan.FromSeconds(1)))
             {
-                ulong id = ulong.Parse(user.Substring(3, user.Length - 4));
-                var usr = await Garden.TheFriendTree.GetUserAsync(id);
-                var target = Garden.Tree.GetUser(usr.Id);
-                var cur = Garden.Tree.GetUser(Context.User.Id);
-                if (target != cur && target != null && !usr.IsBot)
+                if (Expression.IsMatch(user))
                 {
-                    target.Friends.Add(cur.TreeIndex);
-                    cur.Friends.Add(target.TreeIndex);
-                    await ReplyAsync($"Added {usr.Username}:#{usr.Discriminator} as a friend!");
+                    ulong id = ulong.Parse(user.Substring(3, user.Length - 4));
+                    var usr = await Garden.TheFriendTree.GetUserAsync(id);
+                    var target = Garden.Tree.GetUser(usr.Id);
+                    var cur = Garden.Tree.GetUser(Context.User.Id);
+                    if (target != cur && target != null && !usr.IsBot)
+                    {
+                        target.Friends.Add(cur.TreeIndex);
+                        cur.Friends.Add(target.TreeIndex);
+                        await ReplyAsync($"Added {usr.Username}:#{usr.Discriminator} as a friend!");
+                    }
+                    else
+                    {
+                        await ReplyAsync($"The target user is either a bot or is not on this server!");
+                    }
                 }
                 else
                 {
-                    await ReplyAsync($"The target user is either a bot or is not on this server!");
+                    await ReplyAsync("Please tag a user!");
                 }
-            }
-            else
-            {
-                await ReplyAsync("Please tag a user!");
             }
         }
 
@@ -43,28 +47,31 @@ namespace gardener.Modules
         [RequireContext(ContextType.Guild)]
         public async Task UnFriend(string user)
         {
-            if (Expression.IsMatch(user))
+            if (Limiter.Limit(Context, TimeSpan.FromSeconds(1)))
             {
-                ulong id = ulong.Parse(user.Substring(3, user.Length - 4));
-                var usr = await Garden.TheFriendTree.GetUserAsync(id);
-                var target = Garden.Tree.GetUser(usr.Id);
-                var cur = Garden.Tree.GetUser(Context.User.Id);
-                if (target != cur && target != null && !usr.IsBot &&
-                    target.Friends.Contains(cur.TreeIndex) &&
-                    cur.Friends.Contains(target.TreeIndex))
+                if (Expression.IsMatch(user))
                 {
-                    target.Friends.Remove(cur.TreeIndex);
-                    cur.Friends.Remove(target.TreeIndex);
-                    await ReplyAsync($"You are no longer the friend of {usr.Username}:#{usr.Discriminator}!");
+                    ulong id = ulong.Parse(user.Substring(3, user.Length - 4));
+                    var usr = await Garden.TheFriendTree.GetUserAsync(id);
+                    var target = Garden.Tree.GetUser(usr.Id);
+                    var cur = Garden.Tree.GetUser(Context.User.Id);
+                    if (target != cur && target != null && !usr.IsBot &&
+                        target.Friends.Contains(cur.TreeIndex) &&
+                        cur.Friends.Contains(target.TreeIndex))
+                    {
+                        target.Friends.Remove(cur.TreeIndex);
+                        cur.Friends.Remove(target.TreeIndex);
+                        await ReplyAsync($"You are no longer the friend of {usr.Username}:#{usr.Discriminator}!");
+                    }
+                    else
+                    {
+                        await ReplyAsync($"The target user is either a bot or is not your friend!");
+                    }
                 }
                 else
                 {
-                    await ReplyAsync($"The target user is either a bot or is not your friend!");
+                    await ReplyAsync("Please tag a user!");
                 }
-            }
-            else
-            {
-                await ReplyAsync("Please tag a user!");
             }
         }
 
@@ -72,14 +79,17 @@ namespace gardener.Modules
         [RequireContext(ContextType.Guild)]
         public async Task Friends()
         {
-            var cur = Garden.Tree.GetUser(Context.User.Id);
-            if (cur != null)
+            if (Limiter.Limit(Context, TimeSpan.FromSeconds(1)))
             {
-                await ReplyAsync(embed: await GetEmbed(cur));
-            }
-            else
-            {
-                await ReplyAsync($"The target user is either a bot or is not your friend!");
+                var cur = Garden.Tree.GetUser(Context.User.Id);
+                if (cur != null)
+                {
+                    await ReplyAsync(embed: await GetEmbed(cur));
+                }
+                else
+                {
+                    await ReplyAsync($"The target user is either a bot or is not your friend!");
+                }
             }
         }
 
