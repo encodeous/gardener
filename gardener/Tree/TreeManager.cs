@@ -114,6 +114,7 @@ namespace gardener.Tree
 
         public UserObject GetUser(ulong uid)
         {
+            if (!TreeState.UserMap.ContainsKey(uid)) return null;
             return TreeState.Users[TreeState.UserMap[uid]];
         }
 
