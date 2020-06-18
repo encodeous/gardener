@@ -51,11 +51,10 @@ namespace gardener.Modules
                         $"\n" +
                         $"**Mutual Friends**\n");
 
-            var targetFriends = (HashSet<int>)userObj.FriendsInvited.Union(userObj.Friends);
-            targetFriends.Add(userObj.InvitedBy);
-            var userFriends = (HashSet<int>)requestUser.FriendsInvited.Union(requestUser.Friends);
-            userFriends.Add(requestUser.InvitedBy);
-            
+            var targetFriends = new HashSet<int>(userObj.FriendsInvited.Union(userObj.Friends)) {userObj.InvitedBy};
+            var userFriends =
+                new HashSet<int>(requestUser.FriendsInvited.Union(requestUser.Friends)) {requestUser.InvitedBy};
+
             targetFriends.IntersectWith(userFriends);
 
             if (targetFriends.Count == 0)
