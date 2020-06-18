@@ -133,7 +133,15 @@ namespace gardener.Modules
             {
                 var uid = Garden.Tree.TreeState.Users[id].UserId;
                 var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
-                sb.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{id}]\n");
+                if (guildUser == null)
+                {
+                    sb.Append($"Unknown User ({uid}) [{id}]\n");
+                }
+                else
+                {
+                    sb.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{id}]\n");
+                }
+                
             }
 
             return new EmbedBuilder()
