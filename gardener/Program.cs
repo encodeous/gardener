@@ -109,7 +109,7 @@ namespace gardener
                     Console.WriteLine("Updating Gardener...");
                     await UpdateProcess.StartUpdate();
                 }
-            }, TimeSpan.FromSeconds(30), StopToken);
+            }, TimeSpan.FromSeconds(10), StopToken);
 
             await Garden.OnStart();
 
