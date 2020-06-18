@@ -33,6 +33,7 @@ namespace gardener.Tree
 
         public async Task OnUserJoin(SocketGuildUser user)
         {
+            if (user.IsBot) return;
             var usr = GetUser(user.Id);
             if (usr != null)
             {

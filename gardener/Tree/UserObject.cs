@@ -4,7 +4,7 @@ using System.Text;
 
 namespace gardener.Tree
 {
-    class UserObject
+    public class UserObject
     {
         public ulong UserId;
         public int TreeIndex;
