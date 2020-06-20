@@ -26,12 +26,12 @@ namespace gardener.Modules
 
                     var currentTreeUser = Garden.Tree.GetUser(Context.User.Id);
 
-                    if (treeUser != null && treeUser.TreeIndex != currentTreeUser.TreeIndex && !discordUser.IsBot)
+                    if (treeUser != null && treeUser.TreeId != currentTreeUser.TreeId && !discordUser.IsBot)
                     {
-                        if (currentTreeUser.Friends.Contains(treeUser.TreeIndex))
+                        if (currentTreeUser.Friends.Contains(treeUser.TreeId))
                         {
-                            treeUser.Friends.Add(treeUser.TreeIndex);
-                            treeUser.Friends.Add(treeUser.TreeIndex);
+                            treeUser.Friends.Add(currentTreeUser.TreeId);
+                            currentTreeUser.Friends.Add(treeUser.TreeId);
                             await ReplyAsync($"Added {DsUtils.GetDiscordUsername(discordUser.Id)} as a friend!");
                         }
                         else
@@ -65,12 +65,12 @@ namespace gardener.Modules
 
                     var currentTreeUser = Garden.Tree.GetUser(Context.User.Id);
 
-                    if (treeUser != null && treeUser.TreeIndex != currentTreeUser.TreeIndex && !discordUser.IsBot)
+                    if (treeUser != null && treeUser.TreeId != currentTreeUser.TreeId && !discordUser.IsBot)
                     {
-                        if (currentTreeUser.Friends.Contains(treeUser.TreeIndex))
+                        if (currentTreeUser.Friends.Contains(treeUser.TreeId))
                         {
-                            treeUser.Friends.Remove(treeUser.TreeIndex);
-                            treeUser.Friends.Remove(treeUser.TreeIndex);
+                            treeUser.Friends.Remove(currentTreeUser.TreeId);
+                            currentTreeUser.Friends.Remove(treeUser.TreeId);
                             await ReplyAsync($"You are no longer the friend of {DsUtils.GetDiscordUsername(discordUser.Id)}!");
                         }
                         else
@@ -120,7 +120,7 @@ namespace gardener.Modules
             
             foreach (var id in obj.Friends)
             {
-                sb.Append(DsUtils.GetDiscordUsername(Garden.TreeState.Users[id].UserId));
+                sb.Append(DsUtils.GetDiscordUsername(Garden.TreeState.Users[id].UserId) + "\n");
             }
 
             sb.Append("\n**Invited Friends:**\n");

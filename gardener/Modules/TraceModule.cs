@@ -79,7 +79,7 @@ namespace gardener.Modules
             StringBuilder desc = new StringBuilder();
             desc.Append($"**A path of friends from you to {DsUtils.GetDiscordUsername(userObj.UserId)}**\n");
 
-            var route = TraceRoute(requestUser.TreeIndex, userObj.TreeIndex);
+            var route = TraceRoute(requestUser.TreeId, userObj.TreeId);
 
             foreach (int k in route)
             {

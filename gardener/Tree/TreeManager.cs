@@ -30,10 +30,10 @@ namespace gardener.Tree
             if (Garden.TreeState.Users.Count == 0)
             {
                 var usr = CreateUser(236596516423204865);
-                usr.TreeIndex = 0;
+                usr.TreeId = 0;
                 usr.InvitedBy = -1;
                 Garden.TreeState.Users.Add(usr);
-                Garden.TreeState.InviteMap.Add(usr.TreeCode, 0);
+                Garden.TreeState.InviteMap.Add(usr.InviteTreeCode, 0);
                 Garden.TreeState.UserMap[236596516423204865] = 0;
             }
         }
@@ -104,14 +104,14 @@ namespace gardener.Tree
                         }
 
                         var userObj = CreateUser(user.Id);
-                        userObj.InvitedBy = inviter.TreeIndex;
-                        userObj.Friends.Add(inviter.TreeIndex);
+                        userObj.InvitedBy = inviter.TreeId;
+                        userObj.Friends.Add(inviter.TreeId);
                         int newUserIndex = Garden.TreeState.Users.Count;
-                        userObj.TreeIndex = newUserIndex;
+                        userObj.TreeId = newUserIndex;
 
                         Garden.TreeState.Users.Add(userObj);
 
-                        Garden.TreeState.UserMap[user.Id] = userObj.TreeIndex;
+                        Garden.TreeState.UserMap[user.Id] = userObj.TreeId;
 
                         inviter.FriendsInvited.Add(newUserIndex);
                         inviter.Friends.Add(newUserIndex);
@@ -160,7 +160,7 @@ namespace gardener.Tree
                 code = rng.Next(0, 999999999);
             }
 
-            obj.TreeCode = code;
+            obj.InviteTreeCode = code;
             return obj;
         }
 

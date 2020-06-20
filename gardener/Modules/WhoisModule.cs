@@ -47,7 +47,7 @@ namespace gardener.Modules
                         $"  - **Joined:** {user.JoinedAt.Value.Date.ToUniversalTime():MM/dd/yyyy}\n" +
                         $"  - **Users Invited:** {userObj.FriendsInvited.Count}\n" +
                         $"  - **Invited By:** Index {userObj.InvitedBy}\n" +
-                        $"  - **User Index:** {userObj.TreeIndex}\n" +
+                        $"  - **User Index:** {userObj.TreeId}\n" +
                         $"\n" +
                         $"**Mutual Friends**\n");
 

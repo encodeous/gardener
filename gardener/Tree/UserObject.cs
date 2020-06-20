@@ -7,10 +7,10 @@ namespace gardener.Tree
     public class UserObject
     {
         public ulong UserId;
-        public int TreeIndex;
+        public int TreeId;
         public int InvitedBy;
         public HashSet<int> Friends;
         public HashSet<int> FriendsInvited;
-        public int TreeCode;
+        public int InviteTreeCode;
     }
 }

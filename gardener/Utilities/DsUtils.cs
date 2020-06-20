@@ -11,7 +11,7 @@ namespace gardener.Utilities
         public static async ValueTask<string> GetDiscordUsername(ulong uid)
         {
             var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
-            int k = Garden.Tree.GetUser(uid).TreeIndex;
+            int k = Garden.Tree.GetUser(uid).TreeId;
             if (guildUser == null)
             {
                 return $"Unknown User ({uid}) [{k}]";

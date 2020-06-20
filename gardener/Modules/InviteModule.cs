@@ -17,7 +17,7 @@ namespace gardener.Modules
             {
                 Context.User.SendMessageAsync("Thank you for inviting others to the server.\n" +
                                               $"Here is the invite link: `{Config.InviteLink}`\n" +
-                                              $"Your **Tree Code** is {Garden.Tree.GetTreeCodeFormatted(obj.TreeCode)}\n");
+                                              $"Your **Tree Code** is {Garden.Tree.GetTreeCodeFormatted(obj.InviteTreeCode)}\n");
             }
             else
             {
