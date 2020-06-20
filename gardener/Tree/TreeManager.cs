@@ -30,7 +30,6 @@ namespace gardener.Tree
             {
                 TreeState = new TreeState();
             }
-            TreeState ??= new TreeState();
 
             if (TreeState.Users.Count == 0)
             {
