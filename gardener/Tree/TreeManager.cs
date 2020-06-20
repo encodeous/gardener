@@ -27,7 +27,7 @@ namespace gardener.Tree
         {
             if (File.Exists("data/tree.garden"))
             {
-                TreeState = (TreeState)JsonConvert.DeserializeObject(await File.ReadAllTextAsync("data/tree.garden"));
+                TreeState = JsonConvert.DeserializeObject<TreeState>(await File.ReadAllTextAsync("data/tree.garden"));
             }
             else
             {
