@@ -13,6 +13,7 @@ namespace gardener
 {
     static class Garden
     {
+        public static TreeState TreeState;
         public static IGuild TheFriendTree;
         public static TreeManager Tree = new TreeManager();
         public static ulong NotConnectedRole = 719734965310455810;

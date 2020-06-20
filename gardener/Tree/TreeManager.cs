@@ -13,29 +13,28 @@ namespace gardener.Tree
 {
     class TreeManager
     {
-        public TreeState TreeState;
         public async Task SaveAsync()
         {
-            if (TreeState != null)
+            if (Garden.TreeState != null)
             {
-                var serialized = JsonConvert.SerializeObject(TreeState);
+                var serialized = JsonConvert.SerializeObject(Garden.TreeState);
                 await File.WriteAllTextAsync("data/tree.garden", serialized);
             }
         }
 
         public async Task LoadAsync()
         {
-            TreeState = File.Exists("data/tree.garden") ?
+            Garden.TreeState = File.Exists("data/tree.garden") ?
                 JsonConvert.DeserializeObject<TreeState>(await File.ReadAllTextAsync("data/tree.garden")) : new TreeState();
 
-            if (TreeState.Users.Count == 0)
+            if (Garden.TreeState.Users.Count == 0)
             {
                 var usr = CreateUser(236596516423204865);
                 usr.TreeIndex = 0;
-                usr.InvitedBy = 0;
-                TreeState.Users.Add(usr);
-                TreeState.InviteMap.Add(usr.TreeCode, 0);
-                TreeState.UserMap[236596516423204865] = 0;
+                usr.InvitedBy = -1;
+                Garden.TreeState.Users.Add(usr);
+                Garden.TreeState.InviteMap.Add(usr.TreeCode, 0);
+                Garden.TreeState.UserMap[236596516423204865] = 0;
             }
         }
 
@@ -67,7 +66,7 @@ namespace gardener.Tree
                                       "Please send me a **Tree Code** to join the server.\n" +
                                       "A **Tree Code** looks like `T-123-123-123`.\n" +
                                       "Just message me in this DM to connect your account to the Tree!");
-                TreeState.UsersConnecting.Add(user.Id);
+                Garden.TreeState.UsersConnecting.Add(user.Id);
             }
 
         }
@@ -90,9 +89,9 @@ namespace gardener.Tree
                 try
                 {
                     int inviteCode = ParseCode(code);
-                    if (TreeState.InviteMap.ContainsKey(inviteCode))
+                    if (Garden.TreeState.InviteMap.ContainsKey(inviteCode))
                     {
-                        var inviter = TreeState.Users[TreeState.InviteMap[inviteCode]];
+                        var inviter = Garden.TreeState.Users[Garden.TreeState.InviteMap[inviteCode]];
                         var inviteUser = await Garden.TheFriendTree.GetUserAsync(inviter.UserId).ConfigureAwait(false);
                         if (inviteUser != null)
                         {
@@ -107,17 +106,17 @@ namespace gardener.Tree
                         var userObj = CreateUser(user.Id);
                         userObj.InvitedBy = inviter.TreeIndex;
                         userObj.Friends.Add(inviter.TreeIndex);
-                        int newUserIndex = TreeState.Users.Count;
+                        int newUserIndex = Garden.TreeState.Users.Count;
                         userObj.TreeIndex = newUserIndex;
 
-                        TreeState.Users.Add(userObj);
+                        Garden.TreeState.Users.Add(userObj);
 
-                        TreeState.UserMap[user.Id] = userObj.TreeIndex;
+                        Garden.TreeState.UserMap[user.Id] = userObj.TreeIndex;
 
                         inviter.FriendsInvited.Add(newUserIndex);
                         inviter.Friends.Add(newUserIndex);
 
-                        TreeState.UsersConnecting.Remove(user.Id);
+                        Garden.TreeState.UsersConnecting.Remove(user.Id);
 
                         var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
 
@@ -139,8 +138,8 @@ namespace gardener.Tree
 
         public UserObject GetUser(ulong uid)
         {
-            if (!TreeState.UserMap.ContainsKey(uid)) return null;
-            return TreeState.Users[TreeState.UserMap[uid]];
+            if (!Garden.TreeState.UserMap.ContainsKey(uid)) return null;
+            return Garden.TreeState.Users[Garden.TreeState.UserMap[uid]];
         }
 
         public string GetTreeCodeFormatted(int code)
@@ -153,10 +152,10 @@ namespace gardener.Tree
 
         public UserObject CreateUser(ulong uid)
         {
-            var obj = new UserObject {UserId = uid, Friends = new List<int>(), FriendsInvited = new List<int>()};
+            var obj = new UserObject {UserId = uid, Friends = new HashSet<int>(), FriendsInvited = new HashSet<int>()};
             var rng = new Random();
             int code = rng.Next(0, 999999999);
-            while (TreeState.InviteMap.ContainsKey(code))
+            while (Garden.TreeState.InviteMap.ContainsKey(code))
             {
                 code = rng.Next(0, 999999999);
             }

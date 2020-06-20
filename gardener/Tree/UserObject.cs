@@ -9,8 +9,8 @@ namespace gardener.Tree
         public ulong UserId;
         public int TreeIndex;
         public int InvitedBy;
-        public List<int> Friends;
-        public List<int> FriendsInvited;
+        public HashSet<int> Friends;
+        public HashSet<int> FriendsInvited;
         public int TreeCode;
     }
 }

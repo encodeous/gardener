@@ -28,9 +28,16 @@ namespace gardener.Modules
 
                     if (treeUser != null && treeUser.TreeIndex != currentTreeUser.TreeIndex && !discordUser.IsBot)
                     {
-                        treeUser.Friends.Add(treeUser.TreeIndex);
-                        treeUser.Friends.Add(treeUser.TreeIndex);
-                        await ReplyAsync($"Added {DsUtils.GetDiscordUsername(discordUser.Id)} as a friend!");
+                        if (currentTreeUser.Friends.Contains(treeUser.TreeIndex))
+                        {
+                            treeUser.Friends.Add(treeUser.TreeIndex);
+                            treeUser.Friends.Add(treeUser.TreeIndex);
+                            await ReplyAsync($"Added {DsUtils.GetDiscordUsername(discordUser.Id)} as a friend!");
+                        }
+                        else
+                        {
+                            await ReplyAsync($"You are already friends with that person");
+                        }
                     }
                     else
                     {
@@ -68,7 +75,7 @@ namespace gardener.Modules
                         }
                         else
                         {
-                            await ReplyAsync($"Failed to remove the friend.");
+                            await ReplyAsync($"You are not friends with the person.");
                         }
                     }
                     else
@@ -92,7 +99,7 @@ namespace gardener.Modules
                 var cur = Garden.Tree.GetUser(Context.User.Id);
                 if (cur != null)
                 {
-                    await ReplyAsync(embed: await GetEmbed(cur));
+                    await ReplyAsync(embed: GetEmbed(cur));
                 }
                 else
                 {
@@ -101,7 +108,7 @@ namespace gardener.Modules
             }
         }
 
-        public static async Task<Embed> GetEmbed(UserObject obj)
+        public static Embed GetEmbed(UserObject obj)
         {
             var footer = new EmbedFooterBuilder()
             {
@@ -113,21 +120,21 @@ namespace gardener.Modules
             
             foreach (var id in obj.Friends)
             {
-                sb.Append(DsUtils.GetDiscordUsername(Garden.Tree.TreeState.Users[id].UserId));
+                sb.Append(DsUtils.GetDiscordUsername(Garden.TreeState.Users[id].UserId));
             }
 
             sb.Append("\n**Invited Friends:**\n");
 
             foreach (var id in obj.FriendsInvited)
             {
-                var uid = Garden.Tree.TreeState.Users[id].UserId;
+                var uid = Garden.TreeState.Users[id].UserId;
                 sb.Append(DsUtils.GetDiscordUsername(uid) + "\n");
             }
 
             sb.Append("\n**Invited By:**\n");
 
             var invitedByTreeId = obj.InvitedBy;
-            var invitedByUserId = Garden.Tree.TreeState.Users[invitedByTreeId].UserId;
+            var invitedByUserId = Garden.TreeState.Users[invitedByTreeId].UserId;
             sb.Append(DsUtils.GetDiscordUsername(invitedByUserId) + "\n");
 
             return new EmbedBuilder()

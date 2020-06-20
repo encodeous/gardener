@@ -18,7 +18,7 @@ namespace gardener.Utilities
             }
             else
             {
-                return $"{guildUser.Username}:#{guildUser.Discriminator} [{k}]\n";
+                return $"{guildUser.Username}:#{guildUser.Discriminator} [{k}]";
             }
         }
         public static Regex MentionExpr = new Regex("<@!\\d+>");

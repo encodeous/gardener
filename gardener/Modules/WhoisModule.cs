@@ -26,7 +26,7 @@ namespace gardener.Modules
                     var discordUser = await Garden.TheFriendTree.GetUserAsync(discordId);
                     var treeUser = Garden.Tree.GetUser(discordId);
 
-                    await ReplyAsync(embed:await GetEmbed(discordUser, treeUser, Garden.Tree.GetUser(Context.User.Id)));
+                    await ReplyAsync(embed:GetEmbed(discordUser, treeUser, Garden.Tree.GetUser(Context.User.Id)));
                 }
                 else
                 {
@@ -35,7 +35,7 @@ namespace gardener.Modules
             }
         }
 
-        public static async Task<Embed> GetEmbed(IGuildUser user, UserObject userObj, UserObject requestUser)
+        public static Embed GetEmbed(IGuildUser user, UserObject userObj, UserObject requestUser)
         {
             var footer = new EmbedFooterBuilder()
             {
@@ -65,7 +65,7 @@ namespace gardener.Modules
             {
                 foreach (var k in targetFriends)
                 {
-                    desc.Append(DsUtils.GetDiscordUsername(Garden.Tree.TreeState.Users[k].UserId));
+                    desc.Append(DsUtils.GetDiscordUsername(Garden.TreeState.Users[k].UserId));
                 }
             }
 

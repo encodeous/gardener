@@ -35,7 +35,7 @@ namespace gardener.Modules
 
         public static List<int> TraceRoute(int start, int end)
         {
-            int[] prev = new int[Garden.Tree.TreeState.Users.Count];
+            int[] prev = new int[Garden.TreeState.Users.Count];
             Array.Fill(prev, -2);
             prev[start] = -1;
             Queue<int> q = new Queue<int>();
@@ -43,7 +43,7 @@ namespace gardener.Modules
             while (q.Count > 0)
             {
                 int k = q.Dequeue();
-                var usr = Garden.Tree.TreeState.Users[k];
+                var usr = Garden.TreeState.Users[k];
                 var set = new HashSet<int>(usr.Friends.Union(usr.FriendsInvited));
                 set.Add(usr.InvitedBy);
                 foreach (int v in set)
@@ -83,14 +83,14 @@ namespace gardener.Modules
 
             foreach (int k in route)
             {
-                var uid = Garden.Tree.TreeState.Users[k].UserId;
+                var uid = Garden.TreeState.Users[k].UserId;
                 desc.Append(DsUtils.GetDiscordUsername(uid) + "\n");
             }
             
             return new EmbedBuilder()
             {
                 Color = Color.Blue,
-                Title = $"**Trace Route of  {DsUtils.GetDiscordUsername(userObj.UserId)}**",
+                Title = $"**Trace Route**",
                 Description = desc.ToString(),
                 Footer = footer
             }.Build();

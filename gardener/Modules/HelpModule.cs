@@ -67,7 +67,7 @@ namespace gardener.Modules
                     $"  !friends - Show your Friends\n" +
                     $"  !friend <tag-person> - Add a person as friend\n" +
                     $"  !unfriend <tag-person> - Remove a friend\n" +
-                    $"  !trace <tag-person> - Finds the number of friends between you and another person\n" +
+                    $"  !trace <tag-person> - Traces a route of friends between you and another person\n" +
                     $"\n" +
                     $"**Private Channels**\n" +
                     $"  !join <channel-code> - Joins channel with invite code\n" +

@@ -40,7 +40,7 @@ namespace gardener
 
             if (!Config.Ready) return;
 
-            if (Garden.Tree.TreeState.UsersConnecting.Contains(rawMessage.Author.Id))
+            if (Garden.TreeState.UsersConnecting.Contains(rawMessage.Author.Id))
             {
                 await Garden.Tree.OnUserMessageAsync(rawMessage);
                 return;
