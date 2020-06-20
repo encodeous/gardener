@@ -63,10 +63,11 @@ namespace gardener
             await _client.LoginAsync(TokenType.Bot, Config.Token).ConfigureAwait(false);
             await _client.StartAsync().ConfigureAwait(false);
 
-            _client.UserJoined += ClientOnUserJoined;
 
             $"Bot started! Press Control + C or Type exit to exit!".Log();
 
+            _client.UserJoined += ClientOnUserJoined;
+            _client.UserLeft += ClientOnUserLeave;
             Console.CancelKeyPress += ConsoleOnCancelKeyPress;
 
             while (Garden.TheFriendTree == null)
@@ -122,6 +123,11 @@ namespace gardener
             {
                 await Task.Delay(100);
             }
+        }
+
+        private Task ClientOnUserLeave(SocketGuildUser arg)
+        {
+            return Garden.Tree.OnUserLeave(arg);
         }
 
         private Task ClientOnUserJoined(SocketGuildUser arg)

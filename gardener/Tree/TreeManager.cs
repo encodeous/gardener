@@ -25,14 +25,8 @@ namespace gardener.Tree
 
         public async Task LoadAsync()
         {
-            if (File.Exists("data/tree.garden"))
-            {
-                TreeState = JsonConvert.DeserializeObject<TreeState>(await File.ReadAllTextAsync("data/tree.garden"));
-            }
-            else
-            {
-                TreeState = new TreeState();
-            }
+            TreeState = File.Exists("data/tree.garden") ?
+                JsonConvert.DeserializeObject<TreeState>(await File.ReadAllTextAsync("data/tree.garden")) : new TreeState();
 
             if (TreeState.Users.Count == 0)
             {
@@ -45,13 +39,27 @@ namespace gardener.Tree
             }
         }
 
+        public async Task OnUserLeave(SocketGuildUser user)
+        {
+            var usr = GetUser(user.Id);
+            if (usr != null)
+            {
+                await user.SendMessageAsync("**It's sad to see you go :(**\n" +
+                                            "Here is the invite link in case you want to join back in the future\n" +
+                                            Config.InviteLink);
+                var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
+                await channel.SendMessageAsync($"Farewell {user.Mention}!");
+            }
+        }
+
         public async Task OnUserJoin(SocketGuildUser user)
         {
             if (user.IsBot) return;
             var usr = GetUser(user.Id);
             if (usr != null)
             {
-                await user.SendMessageAsync("**Welcome Back to The Friend Tree!**");
+                var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
+                await channel.SendMessageAsync($"Welcome {user.Mention} back to The Friend Tree!");
                 await GiveRoles(user.Id);
             }
             else
@@ -113,6 +121,11 @@ namespace gardener.Tree
                         inviter.Friends.Add(newUserIndex);
 
                         TreeState.UsersConnecting.Remove(user.Id);
+
+                        var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
+
+                        await channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read #about for more info!");
+
                         await GiveRoles(user.Id);
                     }
                     else

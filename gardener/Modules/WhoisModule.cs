@@ -44,7 +44,7 @@ namespace gardener.Modules
             
             StringBuilder desc = new StringBuilder();
             desc.Append($"**User Information**\n" +
-                        $"  - **Joined:** {user.JoinedAt.Value.Date.ToUniversalTime():MM/dd/yyyy h:mm tt} UTC\n" +
+                        $"  - **Joined:** {user.JoinedAt.Value.Date.ToUniversalTime():MM/dd/yyyy}\n" +
                         $"  - **Users Invited:** {userObj.FriendsInvited.Count}\n" +
                         $"  - **Invited By:** Index {userObj.InvitedBy}\n" +
                         $"  - **User Index:** {userObj.TreeIndex}\n" +

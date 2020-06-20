@@ -16,6 +16,7 @@ namespace gardener
         public static TreeManager Tree = new TreeManager();
         public static ulong NotConnectedRole = 719734965310455810;
         public static ulong MemberRole = 721024747709923370;
+        public static ulong JoinChannel = 723904761681674261;
 
         public static async Task OnStop()
         {
