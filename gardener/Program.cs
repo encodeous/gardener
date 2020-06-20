@@ -93,6 +93,11 @@ namespace gardener
                 state = !state;
             }, TimeSpan.FromSeconds(5), StopToken);
 
+            Executor.Recur(async () =>
+            {
+                await Garden.Tree.SaveAsync();
+            }, TimeSpan.FromSeconds(10), StopToken);
+
             Executor.WhileToken(async () =>
             {
                 string k = Console.ReadLine();

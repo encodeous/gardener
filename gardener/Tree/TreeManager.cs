@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using Newtonsoft.Json;
 
 namespace gardener.Tree
 {
@@ -14,12 +16,22 @@ namespace gardener.Tree
         public TreeState TreeState;
         public async Task SaveAsync()
         {
-
+            var serialized = JsonConvert.SerializeObject(TreeState);
+            await File.WriteAllTextAsync("data/tree.garden", serialized);
         }
 
         public async Task LoadAsync()
         {
-            TreeState = new TreeState();
+            if (File.Exists("data/tree.garden"))
+            {
+                TreeState = (TreeState)JsonConvert.DeserializeObject(await File.ReadAllTextAsync("data/tree.garden"));
+            }
+            else
+            {
+                TreeState = new TreeState();
+            }
+            TreeState ??= new TreeState();
+
             if (TreeState.Users.Count == 0)
             {
                 var usr = CreateUser(236596516423204865);
