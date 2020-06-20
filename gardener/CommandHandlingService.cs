@@ -40,9 +40,12 @@ namespace gardener
 
             if (!Config.Ready) return;
 
-            if (Garden.TreeState.UsersConnecting.Contains(rawMessage.Author.Id) && rawMessage.Channel is IPrivateChannel)
+            if (Garden.TreeState.UsersConnecting.Contains(rawMessage.Author.Id))
             {
-                await Garden.Tree.OnUserMessageAsync(rawMessage);
+                if (rawMessage.Channel is IPrivateChannel)
+                {
+                    await Garden.Tree.OnUserMessageAsync(rawMessage);
+                }
                 return;
             }
 
