@@ -42,7 +42,7 @@ namespace gardener
 
             if (Garden.TreeState.UsersConnecting.Contains(rawMessage.Author.Id))
             {
-                if (rawMessage.Channel is IPrivateChannel)
+                if (rawMessage.Channel is SocketDMChannel)
                 {
                     await Garden.Tree.OnUserMessageAsync(rawMessage);
                 }

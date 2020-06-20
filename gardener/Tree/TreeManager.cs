@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -13,12 +14,16 @@ namespace gardener.Tree
 {
     class TreeManager
     {
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1);
         public async Task SaveAsync()
         {
             if (Garden.TreeState != null)
             {
+                await _semaphore.WaitAsync(Program.StopToken);
+                if (Program.StopToken.IsCancellationRequested) return;
                 var serialized = JsonConvert.SerializeObject(Garden.TreeState);
                 await File.WriteAllTextAsync("data/tree.garden", serialized);
+                _semaphore.Release();
             }
         }
 
@@ -41,10 +46,17 @@ namespace gardener.Tree
             {
                 var id = user.Id;
 
-                if (Garden.Tree.GetUser(id) == null && !Garden.TreeState.UsersConnecting.Contains(id))
+                if (Garden.Tree.GetUser(id) == null && !Garden.TreeState.UsersConnecting.Contains(id) && !user.IsBot && !user.IsWebhook)
                 {
-                    await user.SendMessageAsync("**Sorry for this late message, it seems like you have joined right when I restarted for an upgrade. You may now connect to the server!\n**");
-                    await Garden.Tree.OnUserJoin(user as SocketGuildUser);
+                    try
+                    {
+                        await user.SendMessageAsync("**Sorry for this late message, it seems like you have joined right when I restarted for an upgrade. You may now connect to the server!\n**");
+                        await Garden.Tree.OnUserJoin(user as SocketGuildUser);
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
         }
@@ -66,18 +78,32 @@ namespace gardener.Tree
             if (usr != null)
             {
                 var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
-                await channel.SendMessageAsync($"Welcome {user.Mention} back to The Friend Tree!");
-                await GiveRoles(user.Id);
+                try
+                {
+                    await channel.SendMessageAsync($"Welcome {user.Mention} back to The Friend Tree!");
+                    await GiveRoles(user.Id);
+                }
+                catch
+                {
+
+                }
             }
             else
             {
                 await user.AddRoleAsync(user.Guild.GetRole(Garden.NotConnectedRole));
-                await user.SendMessageAsync("**Welcome to The Friend Tree!**\n" +
-                                      "\n" +
-                                      "Please send me a **Tree Code** to join the server.\n" +
-                                      "A **Tree Code** looks like `T-123-123-123`.\n" +
-                                      "Just message me in this DM to connect your account to the Tree!");
-                Garden.TreeState.UsersConnecting.Add(user.Id);
+                try
+                {
+                    await user.SendMessageAsync("**Welcome to The Friend Tree!**\n" +
+                                                "\n" +
+                                                "Please send me a **Tree Code** to join the server.\n" +
+                                                "A **Tree Code** looks like `T-123-123-123`.\n" +
+                                                "Just message me in this DM to connect your account to the Tree!");
+                    Garden.TreeState.UsersConnecting.Add(user.Id);
+                }
+                catch
+                {
+
+                }
             }
 
         }
@@ -86,7 +112,14 @@ namespace gardener.Tree
         public async Task OnUserMessageAsync(SocketMessage message)
         {
             var result = Garden.TreeCodeMatcher.Match(message.Content);
-            await RegisterUser(message.Author, result.Value);
+            try
+            {
+                await RegisterUser(message.Author, result.Value);
+            }
+            catch
+            {
+
+            }
         }
 
         public async Task RegisterUser(SocketUser user, string code)
@@ -94,6 +127,7 @@ namespace gardener.Tree
             if (string.IsNullOrEmpty(code))
             {
                 await user.SendMessageAsync("**Please double check your Tree Code!**").ConfigureAwait(false);
+
             }
             else
             {
