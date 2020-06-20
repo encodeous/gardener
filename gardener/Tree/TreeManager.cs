@@ -16,8 +16,11 @@ namespace gardener.Tree
         public TreeState TreeState;
         public async Task SaveAsync()
         {
-            var serialized = JsonConvert.SerializeObject(TreeState);
-            await File.WriteAllTextAsync("data/tree.garden", serialized);
+            if (TreeState != null)
+            {
+                var serialized = JsonConvert.SerializeObject(TreeState);
+                await File.WriteAllTextAsync("data/tree.garden", serialized);
+            }
         }
 
         public async Task LoadAsync()
