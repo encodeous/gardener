@@ -18,15 +18,15 @@ namespace gardener.Modules
         [RequireContext(ContextType.Guild)]
         public async Task Whois(string user)
         {
-            if (Limiter.Limit(Context, TimeSpan.FromSeconds(10)))
+            if (Limiter.Limit(Context, TimeSpan.FromSeconds(3)))
             {
                 if (Expression.IsMatch(user))
                 {
-                    ulong id = ulong.Parse(user.Substring(3, user.Length - 4));
-                    var usr = await Garden.TheFriendTree.GetUserAsync(id);
-                    var target = Garden.Tree.GetUser(usr.Id);
+                    ulong discordId = DsUtils.GetMentionId(user);
+                    var discordUser = await Garden.TheFriendTree.GetUserAsync(discordId);
+                    var treeUser = Garden.Tree.GetUser(discordId);
 
-                    await ReplyAsync(embed:await GetEmbed(usr, target, Garden.Tree.GetUser(Context.User.Id)));
+                    await ReplyAsync(embed:await GetEmbed(discordUser, treeUser, Garden.Tree.GetUser(Context.User.Id)));
                 }
                 else
                 {
@@ -65,16 +65,7 @@ namespace gardener.Modules
             {
                 foreach (var k in targetFriends)
                 {
-                    var uid = Garden.Tree.TreeState.Users[k].UserId;
-                    var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
-                    if (guildUser == null)
-                    {
-                        desc.Append($"Unknown User ({uid}) [{k}]\n");
-                    }
-                    else
-                    {
-                        desc.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{k}]\n");
-                    }
+                    desc.Append(DsUtils.GetDiscordUsername(Garden.Tree.TreeState.Users[k].UserId));
                 }
             }
 

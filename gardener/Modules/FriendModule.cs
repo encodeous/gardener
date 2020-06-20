@@ -12,28 +12,29 @@ namespace gardener.Modules
 {
     public class FriendModule : ModuleBase<SocketCommandContext>
     {
-        public Regex Expression = new Regex("<@!\\d+>");
         [Command("friend")]
         [RequireContext(ContextType.Guild)]
         public async Task Friend(string user)
         {
             if (Limiter.Limit(Context, TimeSpan.FromSeconds(1)))
             {
-                if (Expression.IsMatch(user))
+                if (DsUtils.IsMention(user))
                 {
-                    ulong id = ulong.Parse(user.Substring(3, user.Length - 4));
-                    var usr = await Garden.TheFriendTree.GetUserAsync(id);
-                    var target = Garden.Tree.GetUser(usr.Id);
-                    var cur = Garden.Tree.GetUser(Context.User.Id);
-                    if (target != cur && target != null && !usr.IsBot)
+                    ulong discordId = DsUtils.GetMentionId(user);
+                    var discordUser = await Garden.TheFriendTree.GetUserAsync(discordId);
+                    var treeUser = Garden.Tree.GetUser(discordId);
+
+                    var currentTreeUser = Garden.Tree.GetUser(Context.User.Id);
+
+                    if (treeUser != null && treeUser.TreeIndex != currentTreeUser.TreeIndex && !discordUser.IsBot)
                     {
-                        target.Friends.Add(cur.TreeIndex);
-                        cur.Friends.Add(target.TreeIndex);
-                        await ReplyAsync($"Added {usr.Username}:#{usr.Discriminator} as a friend!");
+                        treeUser.Friends.Add(treeUser.TreeIndex);
+                        treeUser.Friends.Add(treeUser.TreeIndex);
+                        await ReplyAsync($"Added {DsUtils.GetDiscordUsername(discordUser.Id)} as a friend!");
                     }
                     else
                     {
-                        await ReplyAsync($"The target user is either a bot or is not on this server!");
+                        await ReplyAsync($"The target user is not valid in this context!");
                     }
                 }
                 else
@@ -49,23 +50,30 @@ namespace gardener.Modules
         {
             if (Limiter.Limit(Context, TimeSpan.FromSeconds(1)))
             {
-                if (Expression.IsMatch(user))
+                if (DsUtils.IsMention(user))
                 {
-                    ulong id = ulong.Parse(user.Substring(3, user.Length - 4));
-                    var usr = await Garden.TheFriendTree.GetUserAsync(id);
-                    var target = Garden.Tree.GetUser(usr.Id);
-                    var cur = Garden.Tree.GetUser(Context.User.Id);
-                    if (target != cur && target != null && !usr.IsBot &&
-                        target.Friends.Contains(cur.TreeIndex) &&
-                        cur.Friends.Contains(target.TreeIndex))
+                    ulong discordId = DsUtils.GetMentionId(user);
+                    var discordUser = await Garden.TheFriendTree.GetUserAsync(discordId);
+                    var treeUser = Garden.Tree.GetUser(discordId);
+
+                    var currentTreeUser = Garden.Tree.GetUser(Context.User.Id);
+
+                    if (treeUser != null && treeUser.TreeIndex != currentTreeUser.TreeIndex && !discordUser.IsBot)
                     {
-                        target.Friends.Remove(cur.TreeIndex);
-                        cur.Friends.Remove(target.TreeIndex);
-                        await ReplyAsync($"You are no longer the friend of {usr.Username}:#{usr.Discriminator}!");
+                        if (currentTreeUser.Friends.Contains(treeUser.TreeIndex))
+                        {
+                            treeUser.Friends.Remove(treeUser.TreeIndex);
+                            treeUser.Friends.Remove(treeUser.TreeIndex);
+                            await ReplyAsync($"You are no longer the friend of {DsUtils.GetDiscordUsername(discordUser.Id)}!");
+                        }
+                        else
+                        {
+                            await ReplyAsync($"Failed to remove the friend.");
+                        }
                     }
                     else
                     {
-                        await ReplyAsync($"The target user is either a bot or is not your friend!");
+                        await ReplyAsync($"The target user is not valid in this context!");
                     }
                 }
                 else
@@ -105,16 +113,7 @@ namespace gardener.Modules
             
             foreach (var id in obj.Friends)
             {
-                var uid = Garden.Tree.TreeState.Users[id].UserId;
-                var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
-                if (guildUser == null)
-                {
-                    sb.Append($"Unknown User ({uid}) [{id}]\n");
-                }
-                else
-                {
-                    sb.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{id}]\n");
-                }
+                sb.Append(DsUtils.GetDiscordUsername(Garden.Tree.TreeState.Users[id].UserId));
             }
 
             sb.Append("\n**Invited Friends:**\n");
@@ -122,31 +121,14 @@ namespace gardener.Modules
             foreach (var id in obj.FriendsInvited)
             {
                 var uid = Garden.Tree.TreeState.Users[id].UserId;
-                var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
-                if (guildUser == null)
-                {
-                    sb.Append($"Unknown User ({uid}) [{id}]\n");
-                }
-                else
-                {
-                    sb.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{id}]\n");
-                }
+                sb.Append(DsUtils.GetDiscordUsername(uid) + "\n");
             }
 
             sb.Append("\n**Invited By:**\n");
-            {
-                var id = obj.InvitedBy;
-                var uid = Garden.Tree.TreeState.Users[id].UserId;
-                var guildUser = await Garden.TheFriendTree.GetUserAsync(uid);
-                if (guildUser == null)
-                {
-                    sb.Append($"Unknown User ({uid}) [{id}]\n");
-                }
-                else
-                {
-                    sb.Append($"{guildUser.Username}:#{guildUser.Discriminator} [{id}]\n");
-                }
-            }
+
+            var invitedByTreeId = obj.InvitedBy;
+            var invitedByUserId = Garden.Tree.TreeState.Users[invitedByTreeId].UserId;
+            sb.Append(DsUtils.GetDiscordUsername(invitedByUserId) + "\n");
 
             return new EmbedBuilder()
             {

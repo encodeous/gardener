@@ -44,9 +44,6 @@ namespace gardener.Tree
             var usr = GetUser(user.Id);
             if (usr != null)
             {
-                await user.SendMessageAsync("**It's sad to see you go :(**\n" +
-                                            "Here is the invite link in case you want to join back in the future\n" +
-                                            Config.InviteLink);
                 var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
                 await channel.SendMessageAsync($"Farewell {user.Mention}!");
             }
@@ -75,10 +72,10 @@ namespace gardener.Tree
 
         }
 
-        private readonly Regex _matcher = new Regex("T-[0-9]{3}-[0-9]{3}-[0-9]{3}");
+        
         public async Task OnUserMessageAsync(SocketMessage message)
         {
-            var result = _matcher.Match(message.Content);
+            var result = Garden.TreeCodeMatcher.Match(message.Content);
             await RegisterUser(message.Author, result.Value);
         }
 

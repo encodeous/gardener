@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using gardener.Tree;
@@ -17,6 +18,7 @@ namespace gardener
         public static ulong NotConnectedRole = 719734965310455810;
         public static ulong MemberRole = 721024747709923370;
         public static ulong JoinChannel = 723904761681674261;
+        public static Regex TreeCodeMatcher = new Regex("T-[0-9]{3}-[0-9]{3}-[0-9]{3}");
 
         public static async Task OnStop()
         {

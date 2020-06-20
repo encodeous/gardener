@@ -42,7 +42,8 @@ namespace gardener.Modules
                     $"  !help admin - Show help information\n" +
                     $"  !mirror <message-id> - Mirrors the message with the bot\n" +
                     $"  !register <user-id> - Forces a user to be registered if not already\n" +
-                    $"  !channel <name> - Creates a private channel",
+                    $"  !channel <name> - Creates a private channel\n" +
+                    $"  !delchannel <tag-channel> - Deletes a private channel",
                     Footer = footer
             }.Build();
         }
