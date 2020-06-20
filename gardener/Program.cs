@@ -55,6 +55,8 @@ namespace gardener
             $"Starting Discord Client".Log();
             _client = new DiscordSocketClient();
 
+            _client.Log += ClientOnLog;
+
             var services = ConfigureServices();
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
 
@@ -123,6 +125,12 @@ namespace gardener
             {
                 await Task.Delay(100);
             }
+        }
+
+        private Task ClientOnLog(LogMessage arg)
+        {
+            arg.Message.Log();
+            return Task.CompletedTask;
         }
 
         private Task ClientOnUserLeave(SocketGuildUser arg)
