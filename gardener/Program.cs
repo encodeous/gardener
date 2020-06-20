@@ -19,6 +19,7 @@ namespace gardener
         internal static DateTime StartTime = DateTime.Now;
         internal static DiscordSocketClient _client;
         internal static Program Instance;
+        internal static bool AlreadyInitiated = false;
         public static CancellationTokenSource TokenSource = new CancellationTokenSource();
         public static CancellationToken StopToken = TokenSource.Token;
 
@@ -90,6 +91,9 @@ namespace gardener
 
         private async Task ClientOnReady()
         {
+            if (AlreadyInitiated) return;
+
+            AlreadyInitiated = true;
             $"Bot started! Press Control + C to exit!".Log();
 
             while (Garden.TheFriendTree == null)
