@@ -71,12 +71,45 @@ namespace gardener
             _client.UserJoined += ClientOnUserJoined;
             _client.UserLeft += ClientOnUserLeave;
             Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+            
+            Executor.Recur(async () =>
+            {
+                await Garden.Tree.SaveAsync();
+            }, TimeSpan.FromSeconds(10), StopToken);
 
+            Executor.WhileToken(async () =>
+            {
+                string k = Console.ReadLine();
+                if (k == "exit")
+                {
+                    await Stop();
+                }
+            }, StopToken);
+            
+            _client.Ready += ClientOnReady;
+
+            while (!StopToken.IsCancellationRequested)
+            {
+                await Task.Delay(100);
+            }
+        }
+
+        private async Task ClientOnReady()
+        {
             while (Garden.TheFriendTree == null)
             {
                 Garden.TheFriendTree = _client.GetGuild(719734487415652382);
                 await Task.Delay(100).ConfigureAwait(false);
             }
+
+            Executor.Recur(async () =>
+            {
+                if (await GithubChecker.UpdateAvailable())
+                {
+                    Console.WriteLine("Updating Gardener...");
+                    await UpdateProcess.StartUpdate();
+                }
+            }, TimeSpan.FromSeconds(10), StopToken);
 
             bool state = true;
 
@@ -96,35 +129,7 @@ namespace gardener
                 state = !state;
             }, TimeSpan.FromSeconds(5), StopToken);
 
-            Executor.Recur(async () =>
-            {
-                await Garden.Tree.SaveAsync();
-            }, TimeSpan.FromSeconds(10), StopToken);
-
-            Executor.WhileToken(async () =>
-            {
-                string k = Console.ReadLine();
-                if (k == "exit")
-                {
-                    await Stop();
-                }
-            }, StopToken);
-
-            Executor.Recur(async () =>
-            {
-                if (await GithubChecker.UpdateAvailable())
-                {
-                    Console.WriteLine("Updating Gardener...");
-                    await UpdateProcess.StartUpdate();
-                }
-            }, TimeSpan.FromSeconds(10), StopToken);
-
             await Garden.OnStart();
-
-            while (!StopToken.IsCancellationRequested)
-            {
-                await Task.Delay(100);
-            }
         }
 
         private Task ClientOnLog(LogMessage arg)
