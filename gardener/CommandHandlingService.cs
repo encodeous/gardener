@@ -40,7 +40,7 @@ namespace gardener
 
             if (!Config.Ready) return;
 
-            if (Garden.TreeState.UsersConnecting.Contains(rawMessage.Author.Id))
+            if (Garden.TreeState.UsersConnecting.Contains(rawMessage.Author.Id) && rawMessage.Channel is IPrivateChannel)
             {
                 await Garden.Tree.OnUserMessageAsync(rawMessage);
                 return;
@@ -50,6 +50,7 @@ namespace gardener
             if (!message.HasStringPrefix(Config.Prefix, ref argPos)) return;
 
             var context = new SocketCommandContext(_discord, message);
+
             var result = await _commands.ExecuteAsync(context, argPos, _provider).ConfigureAwait(false);
 
             if (result.Error.HasValue &&

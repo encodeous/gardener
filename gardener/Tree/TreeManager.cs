@@ -36,6 +36,17 @@ namespace gardener.Tree
                 Garden.TreeState.InviteMap.Add(usr.InviteTreeCode, 0);
                 Garden.TreeState.UserMap[236596516423204865] = 0;
             }
+
+            foreach (var user in await Garden.TheFriendTree.GetUsersAsync())
+            {
+                var id = user.Id;
+
+                if (Garden.Tree.GetUser(id) == null && !Garden.TreeState.UsersConnecting.Contains(id))
+                {
+                    await user.SendMessageAsync("**Sorry for this late message, it seems like you have joined right when I restarted for an upgrade. You may now connect to the server!\n**");
+                    await Garden.Tree.OnUserJoin(user as SocketGuildUser);
+                }
+            }
         }
 
         public async Task OnUserLeave(SocketGuildUser user)
