@@ -10,6 +10,8 @@ namespace updater
     {
         public Process ActiveProcess;
 
+        public bool StopRequested = false;
+
         public static string Repo = "https://github.com/encodeous/gardener.git";
 
         public static void Main(string[] args)
@@ -27,6 +29,7 @@ namespace updater
         {
             ActiveProcess.StandardInput.WriteLine("exit");
             e.Cancel = true;
+            StopRequested = true;
         }
 
         public void RebuildSources()
@@ -70,6 +73,15 @@ namespace updater
                 {
                     Update();
                     // Wait for discord
+                    Task.Delay(5000);
+                    Run();
+                }
+
+                if (!StopRequested)
+                {
+                    Console.WriteLine("Detected potential crash!");
+                    Console.WriteLine("Updating to the latest commit...");
+                    RebuildSources();
                     Task.Delay(5000);
                     Run();
                 }
