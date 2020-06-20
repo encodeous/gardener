@@ -50,7 +50,6 @@ namespace gardener
             Instance = this;
 
             $"Starting Gardener Bot {Config.VersionString}...".Log();
-            $"Building Configuration".Log();
 
             $"Starting Discord Client".Log();
             _client = new DiscordSocketClient();
@@ -60,14 +59,9 @@ namespace gardener
             var services = ConfigureServices();
             await services.GetRequiredService<CommandHandlingService>().InitializeAsync(services);
 
-            $"Connecting to Discord".Log();
-
             await _client.LoginAsync(TokenType.Bot, Config.Token).ConfigureAwait(false);
             await _client.StartAsync().ConfigureAwait(false);
-
-
-            $"Bot started! Press Control + C or Type exit to exit!".Log();
-
+            
             _client.UserJoined += ClientOnUserJoined;
             _client.UserLeft += ClientOnUserLeave;
             Console.CancelKeyPress += ConsoleOnCancelKeyPress;
@@ -96,6 +90,8 @@ namespace gardener
 
         private async Task ClientOnReady()
         {
+            $"Bot started! Press Control + C to exit!".Log();
+
             while (Garden.TheFriendTree == null)
             {
                 Garden.TheFriendTree = _client.GetGuild(719734487415652382);
