@@ -129,6 +129,7 @@ namespace gardener.Tree
                 {
                     if (result.Success && !string.IsNullOrEmpty(result.Value))
                     {
+                        await message.DeleteAsync();
                         await RegisterUser(message.Author, result.Value);
                     }
                 }
