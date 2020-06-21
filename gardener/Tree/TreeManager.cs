@@ -150,15 +150,6 @@ namespace gardener.Tree
                 {
                     var inviter = Garden.TreeState.Users[Garden.TreeState.InviteMap[inviteCode]];
                     var inviteUser = await Garden.TheFriendTree.GetUserAsync(inviter.UserId).ConfigureAwait(false);
-                    if (inviteUser != null)
-                    {
-                        user.SendMessageAsync("Your account has been successfully " +
-                                                    "linked to the server using " + inviteUser.Username + ":" + inviteUser.Discriminator + "'s code.").Forget();
-                    }
-                    else
-                    {
-                        user.SendMessageAsync("Your account has been successfully linked to the server.").Forget();
-                    }
 
                     var userObj = CreateUser(user.Id);
                     userObj.InvitedBy = inviter.TreeId;
@@ -180,6 +171,16 @@ namespace gardener.Tree
                     channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read <#721095701882470491> for more info!").Forget();
 
                     await GiveRoles(user.Id);
+
+                    if (inviteUser != null)
+                    {
+                        user.SendMessageAsync("Your account has been successfully " +
+                                              "linked to the server using " + inviteUser.Username + ":" + inviteUser.Discriminator + "'s code.").Forget();
+                    }
+                    else
+                    {
+                        user.SendMessageAsync("Your account has been successfully linked to the server.").Forget();
+                    }
                 }
                 else
                 {

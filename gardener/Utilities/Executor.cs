@@ -48,7 +48,13 @@ namespace gardener.Utilities
 
         public static void Forget(this Task t)
         {
-            t.ConfigureAwait(false);
+            var exec = Task.Run(async () => await t.ConfigureAwait(false));
+            exec.ContinueWith((t) =>
+            {
+                if (t.IsFaulted)
+                    if (t.Exception != null)
+                        throw t.Exception;
+            });
         }
 
         public static void Recur(Action action, TimeSpan delay, CancellationToken token)

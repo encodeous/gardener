@@ -92,7 +92,11 @@ namespace gardener
                 }
             }, TimeSpan.FromSeconds(1), StopToken);
 
-            _client.Ready += ClientOnReady;
+            _client.Ready += () =>
+            {
+                ClientOnReady().Forget();
+                return Task.CompletedTask;
+            };
 
             while (!StopToken.IsCancellationRequested)
             {
@@ -161,7 +165,7 @@ namespace gardener
 
         private void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            Executor.Forget(Stop);
+            Stop().Forget();
         }
 
         public async Task Stop()
