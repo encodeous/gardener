@@ -91,6 +91,11 @@ namespace gardener.Tree
             }
             else
             {
+                foreach (var k in user.Roles)
+                {
+                    await user.RemoveRoleAsync(k);
+                }
+
                 await user.AddRoleAsync(user.Guild.GetRole(Garden.NotConnectedRole));
                 try
                 {
