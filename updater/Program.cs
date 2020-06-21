@@ -69,6 +69,11 @@ namespace updater
 
                 Task.Delay(100);
 
+                if (File.Exists("data/exit.garden"))
+                {
+                    File.Delete("data/exit.garden");
+                }
+
                 if (File.Exists("data/updateinfo.garden"))
                 {
                     Update();

@@ -93,7 +93,15 @@ namespace gardener.Tree
             {
                 foreach (var k in user.Roles)
                 {
-                    await user.RemoveRoleAsync(k);
+                    try
+                    {
+                        await user.RemoveRoleAsync(k);
+                    }
+                    catch
+                    {
+
+                    }
+
                 }
 
                 await user.AddRoleAsync(user.Guild.GetRole(Garden.NotConnectedRole));
