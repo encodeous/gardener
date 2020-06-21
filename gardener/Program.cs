@@ -126,24 +126,11 @@ namespace gardener
                 }
             }, TimeSpan.FromSeconds(10), StopToken);
 
-            bool state = true;
 
-            Executor.Recur(async () =>
-            {
-                if (state)
-                {
-                    await _client.SetStatusAsync(UserStatus.DoNotDisturb).ConfigureAwait(false);
-                    await _client.SetActivityAsync(new CustomActivity("Running commit ",
-                        ActivityType.Streaming, ActivityProperties.None, "Test lol")).ConfigureAwait(false);
-                }
-                else
-                {
-                    await _client.SetStatusAsync(UserStatus.Online).ConfigureAwait(false);
-                    await _client.SetGameAsync("Managing The Friend Tree").ConfigureAwait(false);
-                }
+            await _client.SetStatusAsync(UserStatus.DoNotDisturb).ConfigureAwait(false);
 
-                state = !state;
-            }, TimeSpan.FromSeconds(5), StopToken);
+            await _client.SetActivityAsync(new CustomActivity("Running commit ",
+                ActivityType.Listening, ActivityProperties.Play, "Contribute On Github!")).ConfigureAwait(false);
 
             await Garden.OnStart();
         }
