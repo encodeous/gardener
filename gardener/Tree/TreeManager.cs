@@ -200,7 +200,7 @@ namespace gardener.Tree
                     if (inviteUser != null)
                     {
                         user.SendMessageAsync("Your account has been successfully " +
-                                              "linked to the server using " + inviteUser.Username + ":" + inviteUser.Discriminator + "'s code.").Forget();
+                                              $"linked to the server using {DsUtils.GetDiscordUsername(inviteUser.Id)}'s code.").Forget();
                     }
                     else
                     {
