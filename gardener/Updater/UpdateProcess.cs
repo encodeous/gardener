@@ -96,7 +96,7 @@ namespace gardener.Updater
                 Color = Color.Blue,
                 Title = "**A Server Update is in progress.**",
                 Description =
-                    "Please wait a few moments while the system is being updated. This channel is locked and will be unlocked shortly.",
+                    "Please wait a few moments while the system is being updated. All Public Channels will be Locked until the update is complete.",
                 Footer = footer
             }.Build();
         }
