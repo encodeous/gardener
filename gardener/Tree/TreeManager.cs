@@ -109,12 +109,29 @@ namespace gardener.Tree
         }
 
         
-        public async Task OnUserMessageAsync(SocketMessage message)
+        public async Task OnUserMessageAsync(SocketMessage message, bool privateChannel)
         {
-            var result = Garden.TreeCodeMatcher.Match(message.Content);
             try
             {
-                await RegisterUser(message.Author, result.Value);
+                var result = Garden.TreeCodeMatcher.Match(message.Content);
+                if (privateChannel)
+                {
+                    if (!result.Success || string.IsNullOrEmpty(result.Value))
+                    {
+                        await message.Author.SendMessageAsync("**Please double check your Tree Code!**").ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await RegisterUser(message.Author, result.Value);
+                    }
+                }
+                else
+                {
+                    if (result.Success && !string.IsNullOrEmpty(result.Value))
+                    {
+                        await RegisterUser(message.Author, result.Value);
+                    }
+                }
             }
             catch
             {
@@ -124,60 +141,52 @@ namespace gardener.Tree
 
         public async Task RegisterUser(SocketUser user, string code)
         {
-            if (string.IsNullOrEmpty(code))
+            try
             {
-                await user.SendMessageAsync("**Please double check your Tree Code!**").ConfigureAwait(false);
-
-            }
-            else
-            {
-                try
+                int inviteCode = ParseCode(code);
+                if (Garden.TreeState.InviteMap.ContainsKey(inviteCode))
                 {
-                    int inviteCode = ParseCode(code);
-                    if (Garden.TreeState.InviteMap.ContainsKey(inviteCode))
+                    var inviter = Garden.TreeState.Users[Garden.TreeState.InviteMap[inviteCode]];
+                    var inviteUser = await Garden.TheFriendTree.GetUserAsync(inviter.UserId).ConfigureAwait(false);
+                    if (inviteUser != null)
                     {
-                        var inviter = Garden.TreeState.Users[Garden.TreeState.InviteMap[inviteCode]];
-                        var inviteUser = await Garden.TheFriendTree.GetUserAsync(inviter.UserId).ConfigureAwait(false);
-                        if (inviteUser != null)
-                        {
-                            await user.SendMessageAsync("Your account has been successfully " +
-                                                        "linked to the server using " + inviteUser.Username + ":" + inviteUser.Discriminator+"'s code.").ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            await user.SendMessageAsync("Your account has been successfully linked to the server.").ConfigureAwait(false);
-                        }
-
-                        var userObj = CreateUser(user.Id);
-                        userObj.InvitedBy = inviter.TreeId;
-                        userObj.Friends.Add(inviter.TreeId);
-                        int newUserIndex = Garden.TreeState.Users.Count;
-                        userObj.TreeId = newUserIndex;
-
-                        Garden.TreeState.Users.Add(userObj);
-
-                        Garden.TreeState.UserMap[user.Id] = userObj.TreeId;
-
-                        inviter.FriendsInvited.Add(newUserIndex);
-                        inviter.Friends.Add(newUserIndex);
-
-                        Garden.TreeState.UsersConnecting.Remove(user.Id);
-
-                        var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
-
-                        await channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read <#721095701882470491> for more info!");
-
-                        await GiveRoles(user.Id);
+                        await user.SendMessageAsync("Your account has been successfully " +
+                                                    "linked to the server using " + inviteUser.Username + ":" + inviteUser.Discriminator + "'s code.").ConfigureAwait(false);
                     }
                     else
                     {
-                        await user.SendMessageAsync("**The Tree Code you have entered is not valid.**").ConfigureAwait(false);
+                        await user.SendMessageAsync("Your account has been successfully linked to the server.").ConfigureAwait(false);
                     }
+
+                    var userObj = CreateUser(user.Id);
+                    userObj.InvitedBy = inviter.TreeId;
+                    userObj.Friends.Add(inviter.TreeId);
+                    int newUserIndex = Garden.TreeState.Users.Count;
+                    userObj.TreeId = newUserIndex;
+
+                    Garden.TreeState.Users.Add(userObj);
+
+                    Garden.TreeState.UserMap[user.Id] = userObj.TreeId;
+
+                    inviter.FriendsInvited.Add(newUserIndex);
+                    inviter.Friends.Add(newUserIndex);
+
+                    Garden.TreeState.UsersConnecting.Remove(user.Id);
+
+                    var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
+
+                    await channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read <#721095701882470491> for more info!");
+
+                    await GiveRoles(user.Id);
                 }
-                catch
+                else
                 {
-                    await user.SendMessageAsync("**An error occurred when processing your Tree Code, please try again.**").ConfigureAwait(false);
+                    await user.SendMessageAsync("**The Tree Code you have entered is not valid.**").ConfigureAwait(false);
                 }
+            }
+            catch
+            {
+                await user.SendMessageAsync("**An error occurred when processing your Tree Code, please try again.**").ConfigureAwait(false);
             }
         }
 
