@@ -72,15 +72,26 @@ namespace gardener
                 await Garden.Tree.SaveAsync();
             }, TimeSpan.FromSeconds(10), StopToken);
 
-            Executor.WhileToken(async () =>
+            Executor.Recur(async () =>
             {
-                string k = Console.ReadLine();
-                if (k == "exit")
+                if (File.Exists("data/exit.garden"))
                 {
+                    while (true)
+                    {
+                        try
+                        {
+                            File.Delete("data/exit.garden");
+                            break;
+                        }
+                        catch
+                        {
+                            await Task.Delay(100);
+                        }
+                    }
                     await Stop();
                 }
-            }, StopToken);
-            
+            }, TimeSpan.FromSeconds(1), StopToken);
+
             _client.Ready += ClientOnReady;
 
             while (!StopToken.IsCancellationRequested)

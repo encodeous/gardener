@@ -48,6 +48,7 @@ namespace gardener.Updater
         public static async Task NotifyUpdate()
         {
             Console.WriteLine("Locking Channels...");
+
             List<string> messagesSent = new List<string>();
             var chan = await Garden.TheFriendTree.GetTextChannelsAsync();
             var flag = new OverwritePermissions(sendMessages: PermValue.Deny, viewChannel: PermValue.Allow);

@@ -67,7 +67,7 @@ namespace gardener.Tree
             if (usr != null)
             {
                 var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
-                await channel.SendMessageAsync($"Farewell {user.Mention}!");
+                await channel.SendMessageAsync($"Farewell {user.Mention}, hope you return!");
             }
         }
 
@@ -165,7 +165,7 @@ namespace gardener.Tree
 
                         var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
 
-                        await channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read #about for more info!");
+                        await channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read <#721095701882470491> for more info!");
 
                         await GiveRoles(user.Id);
                     }

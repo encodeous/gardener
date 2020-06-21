@@ -27,7 +27,7 @@ namespace updater
 
         private void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
-            ActiveProcess.StandardInput.WriteLine("exit");
+            File.Create("data/exit.garden").Dispose();
             e.Cancel = true;
             StopRequested = true;
         }
