@@ -26,7 +26,14 @@ namespace gardener.Modules
                     var discordUser = await Garden.TheFriendTree.GetUserAsync(discordId);
                     var treeUser = Garden.Tree.GetUser(discordId);
 
-                    await ReplyAsync(embed:GetEmbed(discordUser, treeUser, Garden.Tree.GetUser(Context.User.Id)));
+                    if (treeUser == null)
+                    {
+                        await ReplyAsync(embed: GetEmbed(discordUser, treeUser, Garden.Tree.GetUser(Context.User.Id)));
+                    }
+                    else
+                    {
+                        await ReplyAsync($"The target user is not valid in this context!");
+                    }
                 }
                 else
                 {
