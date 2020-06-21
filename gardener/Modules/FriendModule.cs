@@ -28,7 +28,7 @@ namespace gardener.Modules
 
                     if (treeUser != null && treeUser.TreeId != currentTreeUser.TreeId && !discordUser.IsBot)
                     {
-                        if (currentTreeUser.Friends.Contains(treeUser.TreeId))
+                        if (!currentTreeUser.Friends.Contains(treeUser.TreeId))
                         {
                             treeUser.Friends.Add(currentTreeUser.TreeId);
                             currentTreeUser.Friends.Add(treeUser.TreeId);
