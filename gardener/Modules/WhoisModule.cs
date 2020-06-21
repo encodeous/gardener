@@ -65,7 +65,7 @@ namespace gardener.Modules
             {
                 foreach (var k in targetFriends)
                 {
-                    desc.Append(DsUtils.GetDiscordUsername(Garden.TreeState.Users[k].UserId));
+                    desc.Append(DsUtils.GetDiscordUsername(Garden.TreeState.Users[k].UserId) + "\n");
                 }
             }
 
