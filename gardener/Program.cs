@@ -133,7 +133,8 @@ namespace gardener
                 if (state)
                 {
                     await _client.SetStatusAsync(UserStatus.DoNotDisturb).ConfigureAwait(false);
-                    await _client.SetActivityAsync(new CustomActivity("Running commit ", ActivityType.CustomStatus, ActivityProperties.None, "Test lol")).ConfigureAwait(false);
+                    await _client.SetActivityAsync(new CustomActivity("Running commit ",
+                        ActivityType.Streaming, ActivityProperties.None, "Test lol")).ConfigureAwait(false);
                 }
                 else
                 {
