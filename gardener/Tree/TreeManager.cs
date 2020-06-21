@@ -172,6 +172,18 @@ namespace gardener.Tree
 
                     await GiveRoles(user.Id);
 
+                    Task.Run(() =>
+                    {
+                        int id = newUserIndex;
+                        while (id != Garden.TreeState.Users[id].InvitedBy)
+                        {
+                            id = Garden.TreeState.Users[id].InvitedBy;
+                            Garden.TreeState.Users[id].TotalPeopleInvited++;
+                            int cid = id;
+                            Task.Run(() => { PeopleInvitedChanged(cid); });
+                        }
+                    }).Forget();
+
                     if (inviteUser != null)
                     {
                         user.SendMessageAsync("Your account has been successfully " +
@@ -191,6 +203,11 @@ namespace gardener.Tree
             {
                 user.SendMessageAsync("**An error occurred when processing your Tree Code, please try again.**").Forget();
             }
+        }
+
+        public static void PeopleInvitedChanged(int id)
+        {
+            // to do (invite roles)
         }
 
         public UserObject GetUser(ulong uid)
