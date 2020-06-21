@@ -36,6 +36,13 @@ namespace gardener.Updater
             return hash;
         }
 
+        public static async ValueTask<string> GetRemoteVersionShort()
+        {
+            string k = await Executor.RunWithOutput("git", "ls-remote " + Config.Repo);
+            string hash = k.Substring(0, 7);
+            return hash;
+        }
+
         public static async ValueTask<bool> UpdateAvailable()
         {
             var wbc = new WebClient();

@@ -14,26 +14,27 @@ namespace gardener.Updater
         {
             Console.WriteLine("Unlocking Channels...");
             var sr = new StringReader(File.ReadAllText("data/updateinfo.garden"));
-            int messages = int.Parse(sr.ReadLine());
+            int messages = int.Parse(await sr.ReadLineAsync());
             var flag = new OverwritePermissions(sendMessages: PermValue.Allow, viewChannel: PermValue.Allow);
             for (int i = 0; i < messages; i++)
             {
-                var input = sr.ReadLine().Split(' ');
-                var channel = ulong.Parse(input[0]);
-                var message = ulong.Parse(input[1]);
+                var channel = ulong.Parse(await sr.ReadLineAsync());
                 var chanInstance = await Garden.TheFriendTree.GetTextChannelAsync(channel);
 
                 await chanInstance.AddPermissionOverwriteAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
-
-                try
-                {
-                    await chanInstance.DeleteMessagesAsync(new[] { message });
-                }
-                catch
-                {
-                    // Doesn't matter
-                }
             }
+
+            var announcements = await Garden.TheFriendTree.GetTextChannelAsync(724050344753234040);
+
+            try
+            {
+                await announcements.DeleteMessageAsync(await announcements.GetMessageAsync(ulong.Parse(await sr.ReadLineAsync())));
+            }
+            catch
+            {
+                // Doesn't matter
+            }
+
             File.Delete("data/updateinfo.garden");
             Console.WriteLine("Update Complete!");
         }
@@ -42,7 +43,7 @@ namespace gardener.Updater
         {
             Config.Ready = false;
 
-            await Program._client.SetActivityAsync(new CustomActivity($"an update to {GithubChecker.GetRemoteVersion()}",
+            await Program._client.SetActivityAsync(new CustomActivity($"an update to {await GithubChecker.GetRemoteVersionShort()}",
                 ActivityType.Streaming, ActivityProperties.None, "")).ConfigureAwait(false);
 
             await NotifyUpdate();
@@ -54,7 +55,7 @@ namespace gardener.Updater
         {
             Console.WriteLine("Locking Channels...");
 
-            List<string> messagesSent = new List<string>();
+            List<string> ChannelsModified = new List<string>();
             var chan = await Garden.TheFriendTree.GetTextChannelsAsync();
             var flag = new OverwritePermissions(sendMessages: PermValue.Deny, viewChannel: PermValue.Allow);
             foreach(var channel in chan)
@@ -64,19 +65,22 @@ namespace gardener.Updater
                 {
                     await channel.AddPermissionOverwriteAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole), flag);
 
-                    var result = await channel.SendMessageAsync(embed: GetEmbed());
-                    messagesSent.Add(channel.Id + " " + result.Id);
+                    ChannelsModified.Add(channel.Id+"");
                 }
 
                 await Task.Delay(20);
             }
 
             await using var sw = new StringWriter();
-            await sw.WriteLineAsync(messagesSent.Count + "");
-            foreach (var val in messagesSent)
+            await sw.WriteLineAsync(ChannelsModified.Count + "");
+            foreach (var val in ChannelsModified)
             {
                 await sw.WriteLineAsync(val + "");
             }
+
+            var announcements = await Garden.TheFriendTree.GetTextChannelAsync(724050344753234040);
+            var result = await announcements.SendMessageAsync(embed: GetEmbed());
+            await sw.WriteLineAsync(result.Id+"");
 
             await File.WriteAllTextAsync("data/updateinfo.garden", sw.ToString());
         }
