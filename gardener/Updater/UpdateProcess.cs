@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
+using gardener.Utilities;
 
 namespace gardener.Updater
 {
@@ -40,6 +41,10 @@ namespace gardener.Updater
         public static async Task StartUpdate()
         {
             Config.Ready = false;
+
+            await Program._client.SetActivityAsync(new CustomActivity($"an update to {GithubChecker.GetRemoteVersion()}",
+                ActivityType.Streaming, ActivityProperties.None, "")).ConfigureAwait(false);
+
             await NotifyUpdate();
             await File.WriteAllTextAsync("data/version.garden", await GithubChecker.GetRemoteVersion());
             await Program.Instance.Update();

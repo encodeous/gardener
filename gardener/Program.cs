@@ -129,8 +129,8 @@ namespace gardener
 
             await _client.SetStatusAsync(UserStatus.DoNotDisturb).ConfigureAwait(false);
 
-            await _client.SetActivityAsync(new CustomActivity("Running commit ",
-                ActivityType.Listening, ActivityProperties.Play, "Contribute On Github!")).ConfigureAwait(false);
+            await _client.SetActivityAsync(new CustomActivity($"commit {GithubChecker.GetRemoteVersion()}",
+                ActivityType.Watching, ActivityProperties.None, "")).ConfigureAwait(false);
 
             await Garden.OnStart();
         }
