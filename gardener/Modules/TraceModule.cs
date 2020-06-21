@@ -33,6 +33,26 @@ namespace gardener.Modules
             }
         }
 
+        [Command("trace")]
+        [RequireContext(ContextType.Guild)]
+        public async Task Trace(string user, string user2)
+        {
+            if (Limiter.Limit(Context, TimeSpan.FromSeconds(5)))
+            {
+                if (DsUtils.IsMention(user))
+                {
+                    ulong discordId = DsUtils.GetMentionId(user);
+                    var treeUser = Garden.Tree.GetUser(discordId);
+
+                    await ReplyAsync(embed: GetEmbed(treeUser, Garden.Tree.GetUser(Context.User.Id)));
+                }
+                else
+                {
+                    await ReplyAsync("Please tag a user!");
+                }
+            }
+        }
+
         public static List<int> TraceRoute(int start, int end)
         {
             int[] prev = new int[Garden.TreeState.Users.Count];
