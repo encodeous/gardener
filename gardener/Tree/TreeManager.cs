@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using gardener.Utilities;
 using Newtonsoft.Json;
 
 namespace gardener.Tree
@@ -50,7 +51,7 @@ namespace gardener.Tree
                 {
                     try
                     {
-                        await user.SendMessageAsync("**Sorry for this late message, it seems like you have joined right when I restarted for an upgrade. You may now connect to the server!\n**");
+                        user.SendMessageAsync("**Sorry for this late message, it seems like you have joined right when I restarted for an upgrade. You may now connect to the server!\n**").Forget();
                         await Garden.Tree.OnUserJoin(user as SocketGuildUser);
                     }
                     catch
@@ -67,7 +68,7 @@ namespace gardener.Tree
             if (usr != null)
             {
                 var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
-                await channel.SendMessageAsync($"Farewell {user.Mention}, hope you return!");
+                channel.SendMessageAsync($"Farewell {user.Mention}, hope you return!").Forget();
             }
         }
 
@@ -80,7 +81,7 @@ namespace gardener.Tree
                 var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
                 try
                 {
-                    await channel.SendMessageAsync($"Welcome {user.Mention} back to The Friend Tree!");
+                    channel.SendMessageAsync($"Welcome {user.Mention} back to The Friend Tree!").Forget();
                     await GiveRoles(user.Id);
                 }
                 catch
@@ -93,11 +94,11 @@ namespace gardener.Tree
                 await user.AddRoleAsync(user.Guild.GetRole(Garden.NotConnectedRole));
                 try
                 {
-                    await user.SendMessageAsync("**Welcome to The Friend Tree!**\n" +
+                    user.SendMessageAsync("**Welcome to The Friend Tree!**\n" +
                                                 "\n" +
                                                 "Please send me a **Tree Code** to join the server.\n" +
                                                 "A **Tree Code** looks like `T-123-123-123`.\n" +
-                                                "Just message me in this DM to connect your account to the Tree!");
+                                                "Just message me in this DM to connect your account to the Tree!").Forget();
                     Garden.TreeState.UsersConnecting.Add(user.Id);
                 }
                 catch
@@ -118,7 +119,7 @@ namespace gardener.Tree
                 {
                     if (!result.Success || string.IsNullOrEmpty(result.Value))
                     {
-                        await message.Author.SendMessageAsync("**Please double check your Tree Code!**").ConfigureAwait(false);
+                        message.Author.SendMessageAsync("**Please double check your Tree Code!**").Forget();
                     }
                     else
                     {
@@ -151,12 +152,12 @@ namespace gardener.Tree
                     var inviteUser = await Garden.TheFriendTree.GetUserAsync(inviter.UserId).ConfigureAwait(false);
                     if (inviteUser != null)
                     {
-                        await user.SendMessageAsync("Your account has been successfully " +
-                                                    "linked to the server using " + inviteUser.Username + ":" + inviteUser.Discriminator + "'s code.").ConfigureAwait(false);
+                        user.SendMessageAsync("Your account has been successfully " +
+                                                    "linked to the server using " + inviteUser.Username + ":" + inviteUser.Discriminator + "'s code.").Forget();
                     }
                     else
                     {
-                        await user.SendMessageAsync("Your account has been successfully linked to the server.").ConfigureAwait(false);
+                        user.SendMessageAsync("Your account has been successfully linked to the server.").Forget();
                     }
 
                     var userObj = CreateUser(user.Id);
@@ -176,18 +177,18 @@ namespace gardener.Tree
 
                     var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
 
-                    await channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read <#721095701882470491> for more info!");
+                    channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read <#721095701882470491> for more info!").Forget();
 
                     await GiveRoles(user.Id);
                 }
                 else
                 {
-                    await user.SendMessageAsync("**The Tree Code you have entered is not valid.**").ConfigureAwait(false);
+                    user.SendMessageAsync("**The Tree Code you have entered is not valid.**").Forget();
                 }
             }
             catch
             {
-                await user.SendMessageAsync("**An error occurred when processing your Tree Code, please try again.**").ConfigureAwait(false);
+                user.SendMessageAsync("**An error occurred when processing your Tree Code, please try again.**").Forget();
             }
         }
 
@@ -221,8 +222,7 @@ namespace gardener.Tree
 
         int ParseCode(string code)
         {
-            int value = 0;
-            value = (value + ParseChar(code[2])) * 10;
+            int value = (ParseChar(code[2])) * 10;
             value = (value + ParseChar(code[3])) * 10;
             value = (value + ParseChar(code[4])) * 10;
 

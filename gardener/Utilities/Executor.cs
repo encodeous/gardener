@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace gardener.Utilities
 {
-    class Executor
+    static class Executor
     {
         public static async ValueTask<string> RunWithOutput(string file, string args)
         {
@@ -46,9 +46,9 @@ namespace gardener.Utilities
             return await proc.StandardOutput.ReadToEndAsync();
         }
 
-        public static void Forget(Func<Task> t)
+        public static void Forget(this Task t)
         {
-            Task.Run(t).ConfigureAwait(false);
+            t.ConfigureAwait(false);
         }
 
         public static void Recur(Action action, TimeSpan delay, CancellationToken token)
