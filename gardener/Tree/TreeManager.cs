@@ -52,12 +52,12 @@ namespace gardener.Tree
                     try
                     {
                         user.SendMessageAsync("**Sorry for this late message, it seems like you have joined right when I restarted for an upgrade. You may now connect to the server!\n**").Forget();
-                        await Garden.Tree.OnUserJoin(user as SocketGuildUser);
                     }
                     catch
                     {
 
                     }
+                    await Garden.Tree.OnUserJoin(user as SocketGuildUser);
                 }
             }
         }
@@ -82,12 +82,13 @@ namespace gardener.Tree
                 try
                 {
                     channel.SendMessageAsync($"Welcome {user.Mention} back to The Friend Tree!").Forget();
-                    await GiveRoles(user.Id);
+                    
                 }
-                catch
+                catch (Exception e)
                 {
 
                 }
+                await GiveRoles(user.Id);
             }
             else
             {
@@ -112,12 +113,12 @@ namespace gardener.Tree
                                                 "Please send me a **Tree Code** to join the server.\n" +
                                                 "A **Tree Code** looks like `T-123-123-123`.\n" +
                                                 "Just message me in this DM to connect your account to the Tree!").Forget();
-                    Garden.TreeState.UsersConnecting.Add(user.Id);
                 }
                 catch
                 {
 
                 }
+                Garden.TreeState.UsersConnecting.Add(user.Id);
             }
 
         }
@@ -212,8 +213,9 @@ namespace gardener.Tree
                     user.SendMessageAsync("**The Tree Code you have entered is not valid.**").Forget();
                 }
             }
-            catch
+            catch(Exception e)
             {
+                e.Log("Error while processing tree code");
                 user.SendMessageAsync("**An error occurred when processing your Tree Code, please try again.**").Forget();
             }
         }

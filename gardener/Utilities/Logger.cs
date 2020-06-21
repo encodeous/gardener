@@ -10,5 +10,10 @@ namespace gardener.Utilities
         {
             Console.WriteLine("[" + DateTime.Now.ToString("h:mm:ss tt") + "]: " + s);
         }
+
+        public static void Log(this Exception e, string text)
+        {
+            Console.WriteLine("[" + DateTime.Now.ToString("h:mm:ss tt") + "]: Exception at " + e.StackTrace + e.Message + " " + text);
+        }
     }
 }
