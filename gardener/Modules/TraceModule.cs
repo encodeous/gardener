@@ -17,7 +17,7 @@ namespace gardener.Modules
         [RequireContext(ContextType.Guild)]
         public async Task Trace(string user)
         {
-            if (Limiter.Limit(Context, TimeSpan.FromSeconds(10)))
+            if (Limiter.Limit(Context, TimeSpan.FromSeconds(5)))
             {
                 if (DsUtils.IsMention(user))
                 {

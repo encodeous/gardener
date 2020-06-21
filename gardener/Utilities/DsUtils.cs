@@ -24,12 +24,13 @@ namespace gardener.Utilities
         public static Regex MentionExpr = new Regex("<@!\\d+>");
         public static bool IsMention(string s)
         {
-            return MentionExpr.IsMatch(s);
+            return MentionExpr.Match(s).Success;
         }
 
         public static ulong GetMentionId(string user)
         {
-            return ulong.Parse(user.Substring(3, user.Length - 4));
+            var text = MentionExpr.Match(user).Value;
+            return ulong.Parse(text.Substring(3, text.Length - 4));
         }
     }
 }
