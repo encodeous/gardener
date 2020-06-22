@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using gardener.Filtering;
 using gardener.Utilities;
 
 namespace gardener
@@ -56,6 +57,10 @@ namespace gardener
             if (result.Error.HasValue &&
                 result.Error.Value != CommandError.UnknownCommand)
                 await context.Channel.SendMessageAsync(result.ToString()).ConfigureAwait(false);
+            else
+            {
+                ChatFilter.OnChat(rawMessage);
+            }
         }
     }
 }

@@ -15,4 +15,10 @@
     <PackageReference Include="Octokit" Version="0.48.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="toxinet">
+      <HintPath>toxinet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
