@@ -11,7 +11,7 @@ namespace gardener.Modules
     public class MirrorModule : ModuleBase<SocketCommandContext>
     {
         [Command("mirror")]
-        [RequireUserPermission(GuildPermission.ManageRoles)]
+        [RequireOwner]
         public Task Mirror(ulong id)
         {
             return Context.Channel.SendMessageAsync(Context.Channel.GetMessageAsync(id).Result.Content);

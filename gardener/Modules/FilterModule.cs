@@ -10,7 +10,7 @@ namespace gardener.Modules
     class FilterModule : ModuleBase<SocketCommandContext>
     {
         [Command("filter")]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireOwner]
         public Task Filter()
         {
             if (Garden.TreeState.UnfilteredChannels.Contains(Context.Channel.Id))

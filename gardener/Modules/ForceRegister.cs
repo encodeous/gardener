@@ -10,7 +10,7 @@ namespace gardener.Modules
     class ForceRegister : ModuleBase<SocketCommandContext>
     {
         [Command("register", RunMode = RunMode.Async)]
-        [RequireUserPermission(GuildPermission.Administrator)]
+        [RequireOwner]
         public Task Register(ulong id)
         {
             return Garden.Tree.OnUserJoin(Context.Guild.GetUser(id));
