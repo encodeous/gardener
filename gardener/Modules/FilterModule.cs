@@ -7,7 +7,7 @@ using Discord.Commands;
 
 namespace gardener.Modules
 {
-    class FilterModule : ModuleBase<SocketCommandContext>
+    public class FilterModule : ModuleBase<SocketCommandContext>
     {
         [Command("filter")]
         [RequireOwner]
@@ -18,11 +18,9 @@ namespace gardener.Modules
                 Garden.TreeState.UnfilteredChannels.Remove(Context.Channel.Id);
                 return ReplyAsync("This channel will now be filtered!");
             }
-            else
-            {
-                Garden.TreeState.UnfilteredChannels.Add(Context.Channel.Id);
-                return ReplyAsync("This channel will not be filtered!");
-            }
+
+            Garden.TreeState.UnfilteredChannels.Add(Context.Channel.Id);
+            return ReplyAsync("This channel will not be filtered!");
         }
     }
 }

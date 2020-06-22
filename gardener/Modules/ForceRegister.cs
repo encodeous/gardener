@@ -7,7 +7,7 @@ using Discord.Commands;
 
 namespace gardener.Modules
 {
-    class ForceRegister : ModuleBase<SocketCommandContext>
+    public class ForceRegister : ModuleBase<SocketCommandContext>
     {
         [Command("register", RunMode = RunMode.Async)]
         [RequireOwner]
