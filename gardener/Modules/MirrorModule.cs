@@ -14,6 +14,7 @@ namespace gardener.Modules
         [RequireOwner]
         public Task Mirror(ulong id)
         {
+            Console.WriteLine(Context.Channel.GetMessageAsync(id).Result.Content);
             return Context.Channel.SendMessageAsync(Context.Channel.GetMessageAsync(id).Result.Content);
         }
     }
