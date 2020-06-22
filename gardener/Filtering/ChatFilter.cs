@@ -19,11 +19,13 @@ namespace gardener.Filtering
             {
                 Network = ToxiNet.GetToxiNet();
             }
-            var token = new CancellationTokenSource(200);
+            var token = new CancellationTokenSource(500);
             Task.Run(async () =>
             {
                 if (!Garden.TreeState.UnfilteredChannels.Contains(message.Channel.Id))
                 {
+                    Console.WriteLine(message.Content);
+
                     var parsed = ParseString(message.Content);
                     ToxiNetResult[] minPrediction = null;
                     float minValue = 100;
@@ -95,8 +97,6 @@ namespace gardener.Filtering
             s.Add(input.Replace(" ", ""));
             s.Add(ParseEmote(input.Replace(" ", "")));
             s.Add(ParseEmote(input));
-
-            Console.WriteLine(input);
 
             return s.ToArray();
         }
