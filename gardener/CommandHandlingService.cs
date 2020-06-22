@@ -48,18 +48,16 @@ namespace gardener
             }
 
             int argPos = 0;
-            if (!message.HasStringPrefix(Config.Prefix, ref argPos)) return;
-
-            var context = new SocketCommandContext(_discord, message);
-
-            var result = await _commands.ExecuteAsync(context, argPos, _provider).ConfigureAwait(false);
-
-            if (result.Error.HasValue &&
-                result.Error.Value != CommandError.UnknownCommand)
-                await context.Channel.SendMessageAsync(result.ToString()).ConfigureAwait(false);
-            else
+            ChatFilter.OnChat(rawMessage);
+            if (message.HasStringPrefix(Config.Prefix, ref argPos))
             {
-                ChatFilter.OnChat(rawMessage);
+                var context = new SocketCommandContext(_discord, message);
+
+                var result = await _commands.ExecuteAsync(context, argPos, _provider).ConfigureAwait(false);
+
+                if (result.Error.HasValue &&
+                    result.Error.Value != CommandError.UnknownCommand)
+                    await context.Channel.SendMessageAsync(result.ToString()).ConfigureAwait(false);
             }
         }
     }
