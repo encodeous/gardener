@@ -138,6 +138,7 @@ namespace gardener
         private Task ClientOnLog(LogMessage arg)
         {
             arg.Message.Log();
+            arg.Exception.Log("");
             return Task.CompletedTask;
         }
 

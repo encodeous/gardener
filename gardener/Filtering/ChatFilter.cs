@@ -8,9 +8,13 @@ namespace gardener.Filtering
 {
     class ChatFilter
     {
-        public static ToxiNet Network = ToxiNet.GetToxiNet();
+        public static ToxiNet Network = null;
         public static void OnChat(SocketMessage message)
         {
+            if (Network == null)
+            {
+                Network = ToxiNet.GetToxiNet();
+            }
             if (message.Channel.Id == 724633073693622362)
             {
                 var result = Network.Predict(message.Content);
@@ -29,7 +33,7 @@ namespace gardener.Filtering
             };
             StringBuilder sb = new StringBuilder();
             sb.Append("```\n");
-            Array.Sort(result, (o, o1) => o.Prediction.CompareTo(o1.Prediction));
+            Array.Sort(result, (o, o1) => o1.Prediction.CompareTo(o.Prediction));
 
             foreach (var pred in result)
             {

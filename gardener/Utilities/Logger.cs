@@ -13,6 +13,7 @@ namespace gardener.Utilities
 
         public static void Log(this Exception e, string text)
         {
+            if(e != null)
             Console.WriteLine("[" + DateTime.Now.ToString("h:mm:ss tt") + "]: Exception at " + e.StackTrace + e.Message + " " + text);
         }
     }
