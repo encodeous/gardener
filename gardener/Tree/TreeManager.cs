@@ -33,6 +33,15 @@ namespace gardener.Tree
             Garden.TreeState = File.Exists("data/tree.garden") ?
                 JsonConvert.DeserializeObject<TreeState>(await File.ReadAllTextAsync("data/tree.garden")) : new TreeState();
 
+            // Fix Invitation bug
+
+            foreach(var usr in Garden.TreeState.Users)
+            {
+                Garden.TreeState.InviteMap[usr.InviteTreeCode] = usr.TreeId;
+            }
+
+
+
             if (Garden.TreeState.Users.Count == 0)
             {
                 var usr = CreateUser(236596516423204865);
@@ -175,7 +184,10 @@ namespace gardener.Tree
 
                     Garden.TreeState.UserMap[user.Id] = userObj.TreeId;
 
+                    Garden.TreeState.InviteMap[userObj.InviteTreeCode] = userObj.TreeId;
+
                     inviter.FriendsInvited.Add(newUserIndex);
+
                     inviter.Friends.Add(newUserIndex);
 
                     Garden.TreeState.UsersConnecting.Remove(user.Id);
