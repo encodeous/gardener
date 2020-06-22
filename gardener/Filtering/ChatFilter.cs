@@ -2,6 +2,8 @@
 using Discord.WebSocket;
 using System;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using toxinet;
 
 namespace gardener.Filtering
@@ -15,14 +17,18 @@ namespace gardener.Filtering
             {
                 Network = ToxiNet.GetToxiNet();
             }
-            if (message.Channel.Id == 724633073693622362)
+            var token = new CancellationTokenSource(200);
+            Task.Run(() =>
             {
-                var result = Network.Predict(message.Content);
-                if (result[0].Prediction < 0.6)
+                if (message.Channel.Id == 724633073693622362)
                 {
-                    message.Channel.SendMessageAsync(embed: GetEmbed(result));
+                    var result = Network.Predict(message.Content);
+                    if (result[0].Prediction < 0.6)
+                    {
+                        message.Channel.SendMessageAsync(embed: GetEmbed(result));
+                    }
                 }
-            }
+            }, token.Token);
         }
 
         public static Embed GetEmbed(ToxiNetResult[] result)
