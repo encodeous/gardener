@@ -4,6 +4,7 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using gardener.Utilities;
 using toxinet;
 
 namespace gardener.Filtering
@@ -28,14 +29,19 @@ namespace gardener.Filtering
                         if (result[0].Prediction < 0.1)
                         {
                             await message.DeleteAsync();
+                            $"Message Deleted. {DsUtils.GetDiscordUsername(message.Author.Id)}, {message.Content}".Log();
                         }
-                        await message.Channel.SendMessageAsync(embed: GetEmbed(result, result[0].Prediction < 0.1));
+                        else
+                        {
+                            await message.Channel.SendMessageAsync(embed: GetEmbed(result));
+                            $"User Warned. {DsUtils.GetDiscordUsername(message.Author.Id)}, {message.Content}".Log();
+                        }
                     }
                 }
             }, token.Token);
         }
 
-        public static Embed GetEmbed(ToxiNetResult[] result, bool deleted)
+        public static Embed GetEmbed(ToxiNetResult[] result)
         {
             var footer = new EmbedFooterBuilder()
             {
@@ -44,6 +50,7 @@ namespace gardener.Filtering
             StringBuilder sb = new StringBuilder();
             Array.Sort(result, (o, o1) => o1.Prediction.CompareTo(o.Prediction));
 
+            sb.Append("Type: ");
             foreach (var pred in result)
             {
                 if (pred.Prediction > 0.1 && pred.PredictionType != ToxicityType.Neutral)
@@ -51,10 +58,12 @@ namespace gardener.Filtering
                     sb.Append($"{pred.PredictionType} ");
                 }
             }
+
+            sb.Append("\nPlease refrain from using this type of language.");
             return new EmbedBuilder()
             {
                 Color = Color.Blue,
-                Title = deleted? "**Your message has been deleted**" : "**Your message was determined to be offensive**",
+                Title = "**Your message was determined to be potentially offensive**",
                 Description = sb.ToString(),
                 Footer = footer
             }.Build();
