@@ -95,6 +95,9 @@ namespace gardener.Filtering
             s.Add(input.Replace(" ", ""));
             s.Add(ParseEmote(input.Replace(" ", "")));
             s.Add(ParseEmote(input));
+
+            Console.WriteLine(input);
+
             return s.ToArray();
         }
 
