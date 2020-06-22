@@ -46,12 +46,15 @@ namespace gardener.Filtering
 
             foreach (var pred in result)
             {
-                sb.Append($"`{pred.PredictionType} {(pred.Prediction * 100.0):0.0}% `");
+                if (pred.Prediction > 0.1 && pred.PredictionType != ToxicityType.Neutral)
+                {
+                    sb.Append($"{pred.PredictionType} ");
+                }
             }
             return new EmbedBuilder()
             {
                 Color = Color.Blue,
-                Title = deleted? "*Your message has been deleted**" : "**Your message was determined to be offensive**",
+                Title = deleted? "**Your message has been deleted**" : "**Your message was determined to be offensive**",
                 Description = sb.ToString(),
                 Footer = footer
             }.Build();
