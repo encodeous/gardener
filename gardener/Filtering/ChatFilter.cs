@@ -21,7 +21,7 @@ namespace gardener.Filtering
             var token = new CancellationTokenSource(200);
             Task.Run(async () =>
             {
-                if (message.Channel.Id == 724633073693622362)
+                if (!Garden.TreeState.UnfilteredChannels.Contains(message.Channel.Id))
                 {
                     var result = Network.Predict(message.Content);
                     if (result[0].Prediction < 0.3)

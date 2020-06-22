@@ -13,5 +13,6 @@ namespace gardener.Tree
         public Dictionary<int, int> InviteMap = new Dictionary<int, int>();
         public Dictionary<ulong, int> UserMap = new Dictionary<ulong, int>();
         public HashSet<ulong> UsersConnecting = new HashSet<ulong>();
+        public HashSet<ulong> UnfilteredChannels = new HashSet<ulong>();
     }
 }
