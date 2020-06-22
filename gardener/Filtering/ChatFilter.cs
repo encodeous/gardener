@@ -27,13 +27,15 @@ namespace gardener.Filtering
                 {
                     var parsed = ParseString(message.Content);
                     ToxiNetResult[] minPrediction = null;
+                    string parsedText = "";
                     float minValue = 100;
                     foreach (string text in parsed)
                     {
                         var result = Network.Predict(text);
-
+                        
                         if (result[0].Prediction <= minValue)
                         {
+                            parsedText = text;
                             minPrediction = result;
                         }
                     }
@@ -42,12 +44,12 @@ namespace gardener.Filtering
                         if (minPrediction[0].Prediction < 0.1)
                         {
                             await message.DeleteAsync();
-                            $"Message Deleted. {DsUtils.GetDiscordUsername(message.Author.Id)}, {message.Content}".Log();
+                            $"Message Deleted. {DsUtils.GetDiscordUsername(message.Author.Id)}, {parsedText}".Log();
                         }
                         else
                         {
                             await message.Channel.SendMessageAsync(embed: GetEmbed(minPrediction, message));
-                            $"User Warned. {DsUtils.GetDiscordUsername(message.Author.Id)}, {message.Content}".Log();
+                            $"User Warned. {DsUtils.GetDiscordUsername(message.Author.Id)}, {parsedText}".Log();
                         }
                     }
                 }
@@ -148,7 +150,52 @@ namespace gardener.Filtering
                 .Replace("🇼", "w")
                 .Replace("🇽", "x")
                 .Replace("🇾", "y")
-                .Replace("🇿", "z");
+                .Replace("🇿", "z").Replace(":a:", "a")
+                .Replace(":b:", "b")
+                .Replace(":ab:", "ab")
+                .Replace(":cl:", "cl")
+                .Replace(":o2:", "o")
+                .Replace(":sos:", "sos")
+                .Replace(":x:", "x")
+                .Replace(":o:", "o")
+                .Replace(":ng:", "ng")
+                .Replace(":abcd:", "abcd")
+                .Replace(":ok:", "ok")
+                .Replace(":up:", "up")
+                .Replace(":cool:", "cool")
+                .Replace(":new:", "new")
+                .Replace(":free:", "free")
+                .Replace(":capital_abcd:", "abcd")
+                .Replace(":abc:", "abc")
+                .Replace(":m:", "m")
+                .Replace(":parking:", "p")
+                .Replace(":wc:", "wc")
+                .Replace(":regional_indicator_a:", "a")
+                .Replace(":regional_indicator_b:", "b")
+                .Replace(":regional_indicator_c:", "c")
+                .Replace(":regional_indicator_d:", "d")
+                .Replace(":regional_indicator_e:", "e")
+                .Replace(":regional_indicator_f:", "f")
+                .Replace(":regional_indicator_g:", "g")
+                .Replace(":regional_indicator_h:", "h")
+                .Replace(":regional_indicator_i:", "i")
+                .Replace(":regional_indicator_j:", "j")
+                .Replace(":regional_indicator_k:", "k")
+                .Replace(":regional_indicator_l:", "l")
+                .Replace(":regional_indicator_m:", "m")
+                .Replace(":regional_indicator_n:", "n")
+                .Replace(":regional_indicator_o:", "o")
+                .Replace(":regional_indicator_p:", "p")
+                .Replace(":regional_indicator_q:", "q")
+                .Replace(":regional_indicator_r:", "r")
+                .Replace(":regional_indicator_s:", "s")
+                .Replace(":regional_indicator_t:", "t")
+                .Replace(":regional_indicator_u:", "u")
+                .Replace(":regional_indicator_v:", "v")
+                .Replace(":regional_indicator_w:", "w")
+                .Replace(":regional_indicator_x:", "x")
+                .Replace(":regional_indicator_y:", "y")
+                .Replace(":regional_indicator_z:", "z");
         }
     }
 }
