@@ -132,7 +132,14 @@ namespace gardener
             await _client.SetActivityAsync(new CustomActivity($"commit {await GithubChecker.GetRemoteVersionShort()}",
                 ActivityType.Watching, ActivityProperties.None, "")).ConfigureAwait(false);
 
+            _client.MessageUpdated += ClientOnMessageUpdated;
+
             await Garden.OnStart();
+        }
+
+        private Task ClientOnMessageUpdated(Cacheable<IMessage, ulong> arg1, SocketMessage arg2, ISocketMessageChannel arg3)
+        {
+            return Task.CompletedTask;
         }
 
         private Task ClientOnLog(LogMessage arg)
