@@ -9,7 +9,7 @@ namespace gardener.Modules
 {
     class FilterModule : ModuleBase<SocketCommandContext>
     {
-        [Command("filter", RunMode = RunMode.Async)]
+        [Command("filter")]
         [RequireUserPermission(GuildPermission.Administrator)]
         public Task Filter()
         {
