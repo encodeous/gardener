@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
+using gardener.Extra;
 using gardener.Tree;
 using gardener.Updater;
 
@@ -13,6 +14,8 @@ namespace gardener
 {
     static class Garden
     {
+        public static LetterMatch LetterMatchGame;
+
         public static TreeState TreeState;
         public static IGuild TheFriendTree;
         public static TreeManager Tree = new TreeManager();
@@ -37,6 +40,8 @@ namespace gardener
             }
             await Tree.LoadAsync();
 
+            LetterMatchGame = new LetterMatch();
+            await LetterMatchGame.LoadData();
 
             Config.Ready = true;
         }

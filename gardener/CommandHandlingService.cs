@@ -49,6 +49,12 @@ namespace gardener
                     return;
                 }
 
+                if (rawMessage.Channel.Id == 725059963566817372)
+                {
+                    await Garden.LetterMatchGame.OnText(rawMessage);
+                    return;
+                }
+
                 int argPos = 0;
                 if (await ChatFilter.OnChatAsync(rawMessage))
                 {

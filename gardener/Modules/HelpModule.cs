@@ -70,7 +70,7 @@ namespace gardener.Modules
                     $"  !unfriend <tag-person> - Remove a friend\n" +
                     $"  !trace <tag-person> - Traces a route of friends between you and another person\n" +
                     $"\n" +
-                    $"**Private Channels**\n" +
+                    $"**Private Channels (Not Yet Available)**\n" +
                     $"  !join <channel-code> - Joins channel with invite code\n" +
                     $"  !code - Gets the channel invite code for the current channel\n" +
                     $"  !leave - Leaves the current channel\n" +

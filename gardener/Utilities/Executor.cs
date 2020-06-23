@@ -77,6 +77,19 @@ namespace gardener.Utilities
             }, token);
         }
 
+        public static void RunInFuture(Action action, TimeSpan delay, CancellationToken token)
+        {
+            Task.Run(async () =>
+            {
+                if (delay > TimeSpan.Zero)
+                {
+                    await Task.Delay(delay);
+                }
+                
+                action();
+            }, token);
+        }
+
         public static void WhileToken(Action action, CancellationToken token)
         {
             Task.Run( () =>

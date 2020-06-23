@@ -143,6 +143,7 @@ namespace gardener
             try
             {
                 ChatFilter.OnChatAsync(arg2).Forget();
+                Garden.LetterMatchGame.OnTextEdit(arg2).Forget();
             }
             catch
             {
