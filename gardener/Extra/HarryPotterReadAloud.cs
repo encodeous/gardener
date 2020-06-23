@@ -35,7 +35,7 @@ namespace gardener.Extra
             return new EmbedBuilder()
             {
                 Color = Color.Blue,
-                Title = $"**Harry Potter Read Along {current/}**",
+                Title = $"**Harry Potter Read Along {current}**",
                 Description = text,
                 Footer = footer
             }.Build();
