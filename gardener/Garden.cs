@@ -38,6 +38,7 @@ namespace gardener
                 Console.WriteLine("Running Post-Update Procedure..."); 
                 await UpdateProcess.PostUpdate();
             }
+
             await Tree.LoadAsync();
 
             LetterMatchGame = new LetterMatch();

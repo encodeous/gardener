@@ -89,6 +89,10 @@ namespace gardener.Filtering
 
         public static string[] ParseString(string input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return new string[0];
+            }
             List<string> s = new List<string>();
             s.Add(input);
             s.Add(input.Replace(" ", ""));

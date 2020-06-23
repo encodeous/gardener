@@ -25,7 +25,7 @@ namespace gardener.Extra
             string ln = await sr.ReadLineAsync();
             while (ln != null)
             {
-                if (letterDictionary.ContainsKey(ln[0]))
+                if (!letterDictionary.ContainsKey(ln[0]))
                 {
                     letterDictionary[ln[0]] = new List<string>();
                 }
@@ -67,6 +67,7 @@ namespace gardener.Extra
 
             previousString = cleaned;
             previousMessage = message.Id;
+            stringSet.Remove(cleaned);
         }
 
         public async Task OnTextEdit(SocketMessage message)

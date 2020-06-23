@@ -140,6 +140,17 @@ namespace gardener
 
         private Task ClientOnMessageUpdated(Cacheable<IMessage, ulong> arg1, SocketMessage arg2, ISocketMessageChannel arg3)
         {
+            if (!(arg2 is SocketUserMessage message)) return Task.CompletedTask;
+            if (message.Source != MessageSource.User) return Task.CompletedTask;
+
+            if (!Config.Ready) return Task.CompletedTask;
+
+            if (Garden.TreeState.UsersConnecting.Contains(arg2.Author.Id))
+            {
+                Garden.Tree.OnUserMessageAsync(arg2, arg2.Channel is SocketDMChannel).Forget();
+                return Task.CompletedTask;
+            }
+
             try
             {
                 ChatFilter.OnChatAsync(arg2).Forget();
