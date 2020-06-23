@@ -33,32 +33,38 @@ namespace gardener
             // Add additional initialization code here...
         }
 
-        private async Task MessageReceived(SocketMessage rawMessage)
+        private Task MessageReceived(SocketMessage rawMessage)
         {
-            // Ignore system messages and messages from bots
-            if (!(rawMessage is SocketUserMessage message)) return;
-            if (message.Source != MessageSource.User) return;
-
-            if (!Config.Ready) return;
-
-            if (Garden.TreeState.UsersConnecting.Contains(rawMessage.Author.Id))
+            Task.Run(async () =>
             {
-                Garden.Tree.OnUserMessageAsync(rawMessage, rawMessage.Channel is SocketDMChannel).Forget();
-                return;
-            }
+                // Ignore system messages and messages from bots
+                if (!(rawMessage is SocketUserMessage message)) return;
+                if (message.Source != MessageSource.User) return;
 
-            int argPos = 0;
-            ChatFilter.OnChat(rawMessage);
-            if (message.HasStringPrefix(Config.Prefix, ref argPos))
-            {
-                var context = new SocketCommandContext(_discord, message);
+                if (!Config.Ready) return;
 
-                var result = await _commands.ExecuteAsync(context, argPos, _provider).ConfigureAwait(false);
+                if (Garden.TreeState.UsersConnecting.Contains(rawMessage.Author.Id))
+                {
+                    Garden.Tree.OnUserMessageAsync(rawMessage, rawMessage.Channel is SocketDMChannel).Forget();
+                    return;
+                }
 
-                if (result.Error.HasValue &&
-                    result.Error.Value != CommandError.UnknownCommand)
-                    await context.Channel.SendMessageAsync(result.ToString()).ConfigureAwait(false);
-            }
+                int argPos = 0;
+                if (await ChatFilter.OnChatAsync(rawMessage))
+                {
+                    if (message.HasStringPrefix(Config.Prefix, ref argPos))
+                    {
+                        var context = new SocketCommandContext(_discord, message);
+
+                        var result = await _commands.ExecuteAsync(context, argPos, _provider).ConfigureAwait(false);
+
+                        if (result.Error.HasValue &&
+                            result.Error.Value != CommandError.UnknownCommand)
+                            await context.Channel.SendMessageAsync(result.ToString()).ConfigureAwait(false);
+                    }
+                }
+            });
+            return Task.CompletedTask;
         }
     }
 }

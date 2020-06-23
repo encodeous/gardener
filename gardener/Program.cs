@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using gardener.Filtering;
 using gardener.Tree;
 using gardener.Updater;
 using gardener.Utilities;
@@ -139,6 +140,14 @@ namespace gardener
 
         private Task ClientOnMessageUpdated(Cacheable<IMessage, ulong> arg1, SocketMessage arg2, ISocketMessageChannel arg3)
         {
+            try
+            {
+                ChatFilter.OnChatAsync(arg2).Forget();
+            }
+            catch
+            {
+
+            }
             return Task.CompletedTask;
         }
 

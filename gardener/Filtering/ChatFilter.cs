@@ -14,46 +14,49 @@ namespace gardener.Filtering
     class ChatFilter
     {
         public static ToxiNet Network = null;
-        public static void OnChat(SocketMessage message)
+        public static async Task<bool> OnChatAsync(SocketMessage message)
         {
             if (Network == null)
             {
                 Network = ToxiNet.GetToxiNet();
             }
-            var token = new CancellationTokenSource(500);
-            Task.Run(async () =>
+            if (!Garden.TreeState.UnfilteredChannels.Contains(message.Channel.Id))
             {
-                if (!Garden.TreeState.UnfilteredChannels.Contains(message.Channel.Id))
+                var parsed = ParseString(message.Content);
+                ToxiNetResult[] minPrediction = null;
+                string parsedText = "";
+                float minValue = 100;
+
+                foreach (string text in parsed)
                 {
-                    var parsed = ParseString(message.Content);
-                    ToxiNetResult[] minPrediction = null;
-                    string parsedText = "";
-                    float minValue = 100;
-                    foreach (string text in parsed)
+                    var result = Network.Predict(text);
+
+                    if (result[0].Prediction <= minValue)
                     {
-                        var result = Network.Predict(text);
-                        
-                        if (result[0].Prediction <= minValue)
-                        {
-                            parsedText = text;
-                            minPrediction = result;
-                        }
-                    }
-                    if (minPrediction[0].Prediction < 0.3)
-                    {
-                        if (minPrediction[0].Prediction < 0.1)
-                        {
-                            await message.DeleteAsync();
-                            $"Message Deleted. {DsUtils.GetDiscordUsername(message.Author.Id)}, {parsedText}".Log();
-                        }
-                        else
-                        {
-                            await message.Channel.SendMessageAsync(embed: GetEmbed(minPrediction, message));
-                            $"User Warned. {DsUtils.GetDiscordUsername(message.Author.Id)}, {parsedText}".Log();
-                        }
+                        parsedText = text;
+                        minPrediction = result;
+                        minValue = result[0].Prediction;
                     }
                 }
-            }, token.Token);
+
+                if (minPrediction[0].Prediction < 0.3)
+                {
+                    if (minPrediction[0].Prediction < 0.1)
+                    {
+                        await message.DeleteAsync();
+                        $"Message Deleted. {DsUtils.GetDiscordUsername(message.Author.Id)}, {parsedText}".Log();
+                    }
+                    else
+                    {
+                        await message.Channel.SendMessageAsync(embed: GetEmbed(minPrediction, message));
+                        $"User Warned. {DsUtils.GetDiscordUsername(message.Author.Id)}, {parsedText}".Log();
+                    }
+
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public static Embed GetEmbed(ToxiNetResult[] result, SocketMessage msg)
