@@ -59,6 +59,7 @@ namespace gardener.Tree
                     }
                     await Garden.Tree.OnUserJoin(user as SocketGuildUser);
                 }
+
             }
         }
 
@@ -120,7 +121,6 @@ namespace gardener.Tree
                 }
                 Garden.TreeState.UsersConnecting.Add(user.Id);
             }
-
         }
 
         
