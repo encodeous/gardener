@@ -89,7 +89,7 @@ namespace gardener.Tree
                 {
 
                 }
-                await GiveRoles(user.Id);
+                await GiveRoles(user);
             }
             else
             {
@@ -186,10 +186,8 @@ namespace gardener.Tree
                     var channel = await Garden.TheFriendTree.GetTextChannelAsync(Garden.JoinChannel);
 
                     channel.SendMessageAsync($"Welcome {user.Mention} to The Friend Tree! Please read <#721095701882470491> for more info!").Forget();
-
-                    await GiveRoles(user.Id);
-
-                    Task.Run(() =>
+                    
+                    Task.Run(async () =>
                     {
                         int id = newUserIndex;
                         while (id != Garden.TreeState.Users[id].InvitedBy)
@@ -197,8 +195,11 @@ namespace gardener.Tree
                             id = Garden.TreeState.Users[id].InvitedBy;
                             Garden.TreeState.Users[id].TotalPeopleInvited++;
                             int cid = id;
-                            Task.Run(() => { PeopleInvitedChanged(cid); });
+                            Task.Run(() => { PeopleInvitedChanged(cid); }).Forget();
                         }
+
+                        await Task.Delay(500);
+                        await GiveRoles(await Garden.TheFriendTree.GetUserAsync(user.Id));
                     }).Forget();
 
                     if (inviteUser != null)
@@ -277,9 +278,8 @@ namespace gardener.Tree
             return c - '0';
         }
 
-        public async Task GiveRoles(ulong uid)
+        public async Task GiveRoles(IGuildUser user)
         {
-            var user = await Garden.TheFriendTree.GetUserAsync(uid).ConfigureAwait(false);
             await user.AddRoleAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole)).ConfigureAwait(false);
             await user.RemoveRoleAsync(Garden.TheFriendTree.GetRole(Garden.NotConnectedRole)).ConfigureAwait(false);
         }
