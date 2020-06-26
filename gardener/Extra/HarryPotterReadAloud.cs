@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Webhook;
 using gardener.Utilities;
@@ -12,6 +13,8 @@ namespace gardener.Extra
     {
         public DiscordWebhookClient Webhook;
         public DateTime LastReadTime;
+        public string Book;
+        public int Prev;
 
         public void StartReadEngine()
         {
@@ -27,36 +30,75 @@ namespace gardener.Extra
                 }
                 else
                 {
-                    LastReadTime = DateTime.UtcNow;
+                    LastReadTime = DateTime.MinValue;
                 }
+
+                if (File.Exists("data/book/book.txt"))
+                {
+                    if (File.Exists("data/book/prev.garden"))
+                    {
+                        Prev = int.Parse(File.ReadAllText("data/book/prev.garden"));
+                    }
+                    else
+                    {
+                        Prev = 0;
+                    }
+                    Book = File.ReadAllText("data/book/book.txt");
+                    Read().Forget();
+                }
+
             }
             else
             {
                 File.Create("data/potterhead.garden");
-                Console.WriteLine("Please paste the PotterHead link in the data/potterhead.garden file!");
+                Console.WriteLine("Please paste the PotterHead webhook link in the data/potterhead.garden file!");
             }
         }
 
-        public void Read(int letter)
+        public async Task Read()
         {
-            //Executor.RunInFuture(() =>
-            //{
+            if (Prev >= Book.Length)
+            {
+                await Webhook.SendMessageAsync("We have reached the end of the book!");
+                return;
+            }
 
-            //});
+            var delay = TimeSpan.FromHours(4) - (DateTime.UtcNow - LastReadTime);
+            if (delay > TimeSpan.Zero)
+            {
+                await Task.Delay(delay);
+            }
+            LastReadTime = DateTime.UtcNow;
+            await File.WriteAllTextAsync("data/book/lastreadtime.garden", LastReadTime.ToString());
+            
+            int min = Math.Min(2000, Book.Length - Prev);
+
+            await File.WriteAllTextAsync("data/book/prev.garden", (min + Prev) + "");
+
+            string substr = Book.Substring(Prev, min);
+
+            Prev += min;
+
+            await Webhook.SendMessageAsync(embeds: new[] {GetEmbed(substr, Prev / 2000)});
+
+            await Read();
         }
 
-        //public int GetTotal()
+        public int GetTotal()
+        {
+            return (int)Math.Ceiling(Book.Length / 2000.0);
+        }
 
         public Embed GetEmbed(string text, int current)
         {
             var footer = new EmbedFooterBuilder()
             {
-                Text = "Contribute to the Server | https://github.com/encodeous/gardener/tree/master"
+                Text = "Harry Potter and the Order of the Phoenix"
             };
             return new EmbedBuilder()
             {
-                Color = Color.Blue,
-                Title = $"**Harry Potter Read Along {current}**",
+                Color = Color.Gold,
+                Title = $"**Harry Potter Read Along {current}/{GetTotal()}**",
                 Description = text,
                 Footer = footer
             }.Build();

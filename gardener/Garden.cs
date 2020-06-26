@@ -15,6 +15,7 @@ namespace gardener
     static class Garden
     {
         public static LetterMatch LetterMatchGame;
+        public static HarryPotterReadAloud ReadAloud;
 
         public static TreeState TreeState;
         public static IGuild TheFriendTree;
@@ -43,6 +44,9 @@ namespace gardener
 
             LetterMatchGame = new LetterMatch();
             await LetterMatchGame.LoadData();
+
+            ReadAloud = new HarryPotterReadAloud();
+            ReadAloud.StartReadEngine();
 
             Config.Ready = true;
         }
