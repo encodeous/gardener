@@ -199,6 +199,11 @@ namespace gardener.Tree
                         }
 
                         await Task.Delay(500);
+                    }).Forget();
+
+                    Task.Run(async () =>
+                    {
+                        await Task.Delay(1500);
                         await GiveRoles(await Garden.TheFriendTree.GetUserAsync(user.Id));
                     }).Forget();
 
@@ -280,8 +285,15 @@ namespace gardener.Tree
 
         public async Task GiveRoles(IGuildUser user)
         {
-            await user.AddRoleAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole)).ConfigureAwait(false);
-            await user.RemoveRoleAsync(Garden.TheFriendTree.GetRole(Garden.NotConnectedRole)).ConfigureAwait(false);
+            try
+            {
+                await user.AddRoleAsync(Garden.TheFriendTree.GetRole(Garden.MemberRole)).ConfigureAwait(false);
+                await user.RemoveRoleAsync(Garden.TheFriendTree.GetRole(Garden.NotConnectedRole)).ConfigureAwait(false);
+            }
+            catch(Exception e)
+            {
+                $"Exception: {e.Message}{e.StackTrace}".Log();
+            }
         }
     }
 }
