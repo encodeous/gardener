@@ -75,8 +75,7 @@ namespace gardener.Modules
                     $"  !code - Gets the channel invite code for the current channel\n" +
                     $"  !leave - Leaves the current channel\n" +
                     $"\n" +
-                    $"**Commands**\n" +
-                    $"  !help - Show help information\n" +
+                    $"**Music Commands (Musii)**\n" +
                     $"  !play [p, pl, listen, yt, youtube, spotify, sp] <youtube-link/spotify-playlist/album/track> - Plays the youtube/spotify link in your current voice channel\n" +
                     $"  !s [skip] - Skips the active song\n" +
                     $"  !c [leave, empty, clear, stop] - Clears the playback queue\n" +
