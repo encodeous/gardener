@@ -75,13 +75,14 @@ namespace gardener.Modules
                     $"  !code - Gets the channel invite code for the current channel\n" +
                     $"  !leave - Leaves the current channel\n" +
                     $"\n" +
-                    $"**Music Player (Musii)**\n" +
-                    $"  !play [p, pl, listen, yt, youtube] <youtube-link> - Plays the youtube link in your current voice channel\n" +
+                    $"**Commands**\n" +
+                    $"  !help - Show help information\n" +
+                    $"  !play [p, pl, listen, yt, youtube, spotify, sp] <youtube-link/spotify-playlist/album/track> - Plays the youtube/spotify link in your current voice channel\n" +
                     $"  !s [skip] - Skips the active song\n" +
-                    $"  !c [leave, empty, clear] - Clears the playback queue\n" +
-                    $"  !q [queue] - Shows the songs in the queue\n" +
-                    $"  !musii - Invite Musii to your server!\n" +
-                    $"\n" +
+                    $"  !c [leave, empty, clear, stop] - Clears the playback queue\n" +
+                    $"  !q [queue, next] - Shows the songs in the queue\n" +
+                    $"  !musii - Invite Musii to your server!" +
+                    $"\n"+
                     $"**If you have any other questions, don't hesitate, just ask!**\n",
                 Footer = footer
             }.Build();
